@@ -14,13 +14,13 @@ namespace BDJ
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Train> Trains { get; set; }
-        public DbSet<Tickets> Tickets { get; set; }
+        public DbSet<Ticket> Ticket { get; set; }
         public DbSet<DiscountCard> DiscountCards { get; set; }
         public DbSet<Booking> Bookings { get; set; }
 
         public string DbPath { get; }
 
-        public TrainSystemContext()
+        public TrainSystemContext() : base()
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);

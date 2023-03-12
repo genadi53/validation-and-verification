@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BDJ.Models
 {
-    public class Tickets
+    public class Ticket
     {
         public int Id { get; set; }
         public DateTime DepartureDate { get; set; }

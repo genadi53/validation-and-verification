@@ -11,6 +11,8 @@ namespace BDJ.Models
         public int Id { get; set; }
         public string DepartureStation { get; set; }
         public string DestinationStation { get; set; }
+        public DateTime DepartureDate { get; set; }
         public int Seats { get; set; }
+
     }
 }

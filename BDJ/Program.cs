@@ -1,4 +1,5 @@
 ﻿using BDJ;
+using BDJ.Models;
 using System;
 using System.Linq;
 
@@ -6,10 +7,12 @@ using var db = new TrainSystemContext();
 
 // Note: This sample requires the database to be created before running.
 Console.WriteLine($"Database path: {db.DbPath}.");
-
 // Create
 //Console.WriteLine("Inserting a new blog");
 //db.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
+//db.SaveChanges();
+
+//db.Add(new User { Age = 21, IsAdmin = false, Name = "Ivan Ivan" });
 //db.SaveChanges();
 
 // Read
@@ -18,7 +21,7 @@ Console.WriteLine($"Database path: {db.DbPath}.");
 //    .OrderBy(b => b.BlogId)
 //    .First();
 
-//Console.WriteLine(blog.BlogId + " " + blog.Url);
+Console.WriteLine(db.Users.First().Name);
 
 //// Update
 //Console.WriteLine("Updating the blog and adding a post");

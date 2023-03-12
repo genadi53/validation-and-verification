@@ -13,7 +13,7 @@ namespace BDJ.Models
         public int Age { get; set; }
         public bool IsAdmin { get; set; }
         public DiscountCard? Card { get; set; }
-        public List<Tickets> Tickets { get; } = new();
+        public List<Ticket> Tickets { get; } = new();
         public List<Booking> Bookings { get; } = new();
 
     }
