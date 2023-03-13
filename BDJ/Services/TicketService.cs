@@ -11,7 +11,7 @@ namespace BDJ.Services
     {
         private readonly TrainSystemContext _trainSystemContext;
 
-        public static double calculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double calculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
             TimeSpan earlyTraficStart = new TimeSpan(7, 30, 0);
             TimeSpan earlyTraficEnd = new TimeSpan(9, 30, 0);
@@ -50,7 +50,7 @@ namespace BDJ.Services
 
         }
 
-        public static double calculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double calculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
             double price = calculateTicketPrice(tickePrice, trainLeaveTime, withChild, card);
             return isTwoWay ? 2 * price : price;
