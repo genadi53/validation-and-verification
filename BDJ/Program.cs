@@ -1,27 +1,21 @@
 ﻿using BDJ;
 using BDJ.Models;
+using BDJ.Services;
 using System;
 using System.Linq;
 
 using var db = new TrainSystemContext();
 
-// Note: This sample requires the database to be created before running.
-Console.WriteLine($"Database path: {db.DbPath}.");
-// Create
-//Console.WriteLine("Inserting a new blog");
-//db.Add(new Blog { Url = "http://blogs.msdn.com/adonet" });
-//db.SaveChanges();
 
-//db.Add(new User { Age = 21, IsAdmin = false, Name = "Ivan Ivan" });
-//db.SaveChanges();
+Console.WriteLine(db.DbPath);
 
-// Read
-//Console.WriteLine("Querying for a blog");
-//var blog = db.Blogs
-//    .OrderBy(b => b.BlogId)
-//    .First();
+TrainService trainService = new TrainService(db);
+//trainService.mockDailyTrains();
 
-Console.WriteLine(db.Users.First().Name);
+foreach (var t in db.Trains.ToList())
+{
+    Console.WriteLine($"{t.Id} - from {t.DepartureStation} to {t.DestinationStation} on {t.DepartureDate}");
+}
 
 //// Update
 //Console.WriteLine("Updating the blog and adding a post");

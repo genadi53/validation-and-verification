@@ -11,6 +11,11 @@ namespace BDJ.Services
     {
         private readonly TrainSystemContext _trainSystemContext;
 
+        public TicketService(TrainSystemContext trainSystemContext)
+        {
+            _trainSystemContext = trainSystemContext;
+        }
+
         public double calculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
             TimeSpan earlyTraficStart = new TimeSpan(7, 30, 0);
@@ -56,5 +61,10 @@ namespace BDJ.Services
             return isTwoWay ? 2 * price : price;
         }
 
+        public void createTicket(Train train, double price, DateTime date)
+        {
+            _trainSystemContext.Ticket.Add(new Ticket {DepartureDate= date, Price= price, Train= train });
+            _trainSystemContext.SaveChanges();
+        }
     }
 }

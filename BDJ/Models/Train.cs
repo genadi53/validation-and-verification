@@ -13,6 +13,6 @@ namespace BDJ.Models
         public string DestinationStation { get; set; }
         public DateTime DepartureDate { get; set; }
         public int Seats { get; set; }
-
+        public List<Ticket>? tickets { get; set; }
     }
 }

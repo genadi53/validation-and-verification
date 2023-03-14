@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BDJ.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetupTrains : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,6 +19,7 @@ namespace BDJ.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     DepartureStation = table.Column<string>(type: "TEXT", nullable: false),
                     DestinationStation = table.Column<string>(type: "TEXT", nullable: false),
+                    DepartureDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Seats = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -47,11 +48,8 @@ namespace BDJ.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
                     TicketId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    DepartureDate = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Price = table.Column<double>(type: "REAL", nullable: false)
+                    UserId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,7 +83,7 @@ namespace BDJ.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Tickets",
+                name: "Ticket",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -97,15 +95,15 @@ namespace BDJ.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Tickets", x => x.Id);
+                    table.PrimaryKey("PK_Ticket", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tickets_Trains_TrainId",
+                        name: "FK_Ticket_Trains_TrainId",
                         column: x => x.TrainId,
                         principalTable: "Trains",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Tickets_Users_UserId",
+                        name: "FK_Ticket_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -123,13 +121,13 @@ namespace BDJ.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_TrainId",
-                table: "Tickets",
+                name: "IX_Ticket_TrainId",
+                table: "Ticket",
                 column: "TrainId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tickets_UserId",
-                table: "Tickets",
+                name: "IX_Ticket_UserId",
+                table: "Ticket",
                 column: "UserId");
         }
 
@@ -143,7 +141,7 @@ namespace BDJ.Migrations
                 name: "DiscountCards");
 
             migrationBuilder.DropTable(
-                name: "Tickets");
+                name: "Ticket");
 
             migrationBuilder.DropTable(
                 name: "Trains");

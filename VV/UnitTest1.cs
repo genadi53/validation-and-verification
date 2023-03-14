@@ -1,3 +1,4 @@
+using BDJ;
 using BDJ.Models;
 using BDJ.Services;
 using MySqlX.XDevAPI.Common;
@@ -6,6 +7,8 @@ namespace VV
 {
     public class Tests
     {
+        
+        private TrainSystemContext _trainSystemContext;
         private TicketService _ticketService;
         private DiscountCard seniorCard;
         private DiscountCard familyCard;
@@ -14,7 +17,8 @@ namespace VV
         [SetUp]
         public void Setup()
         {
-            _ticketService = new TicketService();
+            _trainSystemContext = new TrainSystemContext();
+            _ticketService = new TicketService(_trainSystemContext);
             seniorCard = new DiscountCard { Id = 1, Type = "senior", UserId = 1 };
             familyCard = new DiscountCard { Id = 2, Type = "family", UserId = 2 };
 

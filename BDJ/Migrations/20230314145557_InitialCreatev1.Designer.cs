@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDJ.Migrations
 {
     [DbContext(typeof(TrainSystemContext))]
-    [Migration("20230312150735_InitialSetupTrains")]
-    partial class InitialSetupTrains
+    [Migration("20230314145557_InitialCreatev1")]
+    partial class InitialCreatev1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,16 +26,6 @@ namespace BDJ.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("DepartureDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("REAL");
-
                     b.Property<int>("TicketId")
                         .HasColumnType("INTEGER");
 
@@ -43,6 +33,8 @@ namespace BDJ.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("TicketId");
 
                     b.HasIndex("UserId");
 
@@ -70,7 +62,7 @@ namespace BDJ.Migrations
                     b.ToTable("DiscountCards");
                 });
 
-            modelBuilder.Entity("BDJ.Models.Tickets", b =>
+            modelBuilder.Entity("BDJ.Models.Ticket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,7 +86,7 @@ namespace BDJ.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Tickets");
+                    b.ToTable("Ticket");
                 });
 
             modelBuilder.Entity("BDJ.Models.Train", b =>
@@ -102,6 +94,9 @@ namespace BDJ.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("DepartureDate")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("DepartureStation")
                         .IsRequired()
@@ -142,11 +137,21 @@ namespace BDJ.Migrations
 
             modelBuilder.Entity("BDJ.Models.Booking", b =>
                 {
-                    b.HasOne("BDJ.Models.User", null)
+                    b.HasOne("BDJ.Models.Ticket", "Ticket")
+                        .WithMany()
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BDJ.Models.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BDJ.Models.DiscountCard", b =>
@@ -158,10 +163,10 @@ namespace BDJ.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BDJ.Models.Tickets", b =>
+            modelBuilder.Entity("BDJ.Models.Ticket", b =>
                 {
                     b.HasOne("BDJ.Models.Train", "Train")
-                        .WithMany()
+                        .WithMany("tickets")
                         .HasForeignKey("TrainId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -171,6 +176,11 @@ namespace BDJ.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("Train");
+                });
+
+            modelBuilder.Entity("BDJ.Models.Train", b =>
+                {
+                    b.Navigation("tickets");
                 });
 
             modelBuilder.Entity("BDJ.Models.User", b =>

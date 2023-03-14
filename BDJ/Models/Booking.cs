@@ -11,11 +11,9 @@ namespace BDJ.Models
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
         public int TicketId { get; set; }
         public int UserId { get; set; }
-        public DateTime DepartureDate { get; set; }
-        public double Price { get; set; }
-
+        public User User { get; set; }
+        public Ticket Ticket { get; set; }
     }
 }
