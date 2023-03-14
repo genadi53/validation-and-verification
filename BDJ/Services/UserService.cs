@@ -17,10 +17,17 @@ namespace BDJ.Services
         }
 
 
-        public void addUser(string name, int age, DiscountCard? card)
+        public User? addUser(string name, int age, DiscountCard? card)
         {
-            _trainSystemContext.Users.Add(new User { Name = name, Age = age, Card = card });
+            var user = new User { Name = name, Age = age, Card = card };
+            _trainSystemContext.Users.Add(user);
             _trainSystemContext.SaveChanges();
+            return user;
+        }
+
+        public User? searchUserById(int id)
+        {
+            return _trainSystemContext.Users.FirstOrDefault(u => u.Id == id);
         }
 
     }

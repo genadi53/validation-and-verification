@@ -24,17 +24,29 @@ namespace BDJ.Services
             _trainSystemContext = context;
         }
 
-        public Train? searchTrainByDestination(string destination)
+        public IQueryable<Train> searchTrainByDestination(string destination)
         {
-            var train = _trainSystemContext.Trains.OrderBy(train => train.DepartureDate)
-                .First(train => train.DestinationStation.Equals(destination));
-            return train;
+            return _trainSystemContext.Trains.OrderBy(train => train.DepartureDate)
+                .Where(train => train.DestinationStation.Equals(destination)); ;
         }
 
-        public Train? searchTrainByDepartureDate(DateTime date)
+        public IQueryable<Train> searchTrainByDepartureDate(DateTime date)
         {
-            var train = _trainSystemContext.Trains.First(train => train.DestinationStation.Equals(date));
-            return train;
+            return _trainSystemContext.Trains.Where(train => train.DepartureDate.Equals(date));
+        }
+
+
+        public IQueryable<Train> searchTrainByDateAndDestination(string destination, DateTime date)
+        {
+
+
+            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.Equals(destination) && train.DepartureDate.Equals(date));
+            foreach (var t in trains)
+            {
+                Console.WriteLine($"{t.DepartureDate} - from {t.DepartureStation} to {t.DestinationStation}");
+            }
+
+            return trains;
         }
 
         public void createTrain(int seats, string staringStation, string destiinationStation, DateTime date)
