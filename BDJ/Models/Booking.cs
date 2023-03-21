@@ -15,11 +15,11 @@ namespace BDJ.Models
 
         [ForeignKey(nameof(Ticket))]
         public int TicketId { get; set; }
-        public Ticket Ticket { get; set; }
+        public virtual Ticket Ticket { get; set; }
 
         [ForeignKey(nameof(User))]
         public int UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
 
         public bool active { get; set; }
     }

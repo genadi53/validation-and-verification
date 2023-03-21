@@ -53,5 +53,22 @@ namespace BDJ.Services
             _trainSystemContext.Bookings.Add(booking);
             _trainSystemContext.SaveChanges();
         }
+    
+        public void printAllBookings()
+        {
+            foreach (var booking in _trainSystemContext.Bookings.ToList())
+            {
+                _trainSystemContext.Entry(booking).Reference(b => b.Ticket).Load();
+                _trainSystemContext.Entry(booking).Reference(b => b.User).Load();
+
+                Console.WriteLine($"Booking with id {booking.Id} was booked by {booking.User.Name}, who travels with ticket N{booking.TicketId} going to {booking.Ticket.Train.DestinationStation} " +
+                    $"from {booking.Ticket.Train.DepartureStation} on {booking.Ticket.Train.DepartureDate}");
+            }
+        }
+
+
+        //cancel booking
+        //change booking date if its still active
+
     }
 }

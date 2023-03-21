@@ -14,9 +14,9 @@ namespace BDJ.Models
         public string Name { get; set; }
         public int Age { get; set; }
         public bool IsAdmin { get; set; }
-        public DiscountCard? Card { get; set; }
-        public ICollection<Ticket> Tickets { get; set; }
-        public ICollection<Booking> Bookings { get; set; }
+        public virtual DiscountCard? Card { get; set; }
+        public virtual ICollection<Ticket> Tickets { get; set; }
+        public virtual ICollection<Booking> Bookings { get; set; }
 
         public User()
         {

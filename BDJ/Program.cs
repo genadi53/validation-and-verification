@@ -20,7 +20,7 @@ foreach (var t in db.Trains.ToList())
 }
 
 // "3/14/2023 11:00:00 PM"
-bookingService.bookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTime(2023, 3, 14, 23 ,0 ,0));
+//bookingService.bookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTime(2023, 3, 14, 23 ,0 ,0));
 
 //foreach (var t in db.Users.ToList())
 //{
@@ -28,8 +28,8 @@ bookingService.bookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTi
 //}
 
 
-var booking  = db.Bookings.Last();
-Console.WriteLine($"{booking.Id} - {booking.User.Name} travels with ticket N{booking.TicketId} {booking.active} {booking.Ticket.Price}");
+bookingService.printAllBookings();
+
 
 //// Update
 //Console.WriteLine("Updating the blog and adding a post");

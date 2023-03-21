@@ -17,6 +17,6 @@ namespace BDJ.Models
 
         [ForeignKey(nameof(Train))]
         public int TrainId { get; set; }
-        public Train Train { get; set; }
+        public virtual Train Train { get; set; }
     }
 }

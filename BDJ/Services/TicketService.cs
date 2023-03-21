@@ -28,18 +28,23 @@ namespace BDJ.Services
             {
                 if ((card != null) && (card.Type == "family"))
                 {
-                    discount = discount > 0.5 ? 0.5 : discount;
+                    //discount = discount > 0.5 ? 0.5 : discount;
+                    discount = 0.5;
+                    return tickePrice * discount;
                 }
                 else
                 {
-                    discount = discount > 0.9 ? 0.9 : discount;
+                    //discount = discount > 0.9 ? 0.9 : discount;
+                    discount = 0.9;
                 }
 
             }
 
             if ((card != null) && (card.Type == "senior"))
             {
-                discount = discount > 0.66 ? 0.66 : discount;
+                //discount = discount > 0.66 ? 0.66 : discount;
+                discount = 0.66;
+                return tickePrice * discount;
             }
 
             if (Time.isTimeBetween(earlyTraficStart, earlyTraficEnd, trainLeaveTime.TimeOfDay) || Time.isTimeBetween(lateTraficStart, lateTraficEnd, trainLeaveTime.TimeOfDay))
