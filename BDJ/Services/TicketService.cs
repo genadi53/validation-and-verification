@@ -10,18 +10,19 @@ namespace BDJ.Services
     public class TicketService
     {
         private readonly TrainSystemContext _trainSystemContext;
+        private readonly TimeSpan earlyTraficStart = new TimeSpan(7, 30, 0);
+        private readonly TimeSpan earlyTraficEnd = new TimeSpan(9, 30, 0);
+        private readonly TimeSpan lateTraficStart = new TimeSpan(16, 0, 0);
+        private readonly TimeSpan lateTraficEnd = new TimeSpan(19, 30, 0);
 
         public TicketService(TrainSystemContext trainSystemContext)
         {
             _trainSystemContext = trainSystemContext;
         }
 
-        public double calculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double CalculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
-            TimeSpan earlyTraficStart = new TimeSpan(7, 30, 0);
-            TimeSpan earlyTraficEnd = new TimeSpan(9, 30, 0);
-            TimeSpan lateTraficStart = new TimeSpan(16, 0, 0);
-            TimeSpan lateTraficEnd = new TimeSpan(19, 30, 0);
+            if (tickePrice <= 0) return -1;
 
             double discount = 1;
             if (withChild)
@@ -30,7 +31,6 @@ namespace BDJ.Services
                 {
                     //discount = discount > 0.5 ? 0.5 : discount;
                     discount = 0.5;
-                    return tickePrice * discount;
                 }
                 else
                 {
@@ -44,29 +44,30 @@ namespace BDJ.Services
             {
                 //discount = discount > 0.66 ? 0.66 : discount;
                 discount = 0.66;
-                return tickePrice * discount;
             }
 
-            if (Time.isTimeBetween(earlyTraficStart, earlyTraficEnd, trainLeaveTime.TimeOfDay) || Time.isTimeBetween(lateTraficStart, lateTraficEnd, trainLeaveTime.TimeOfDay))
+            bool isInEarlyTraffic = Time.isTimeBetween(earlyTraficStart, earlyTraficEnd, trainLeaveTime.TimeOfDay);
+            bool isInLateTraffic = Time.isTimeBetween(lateTraficStart, lateTraficEnd, trainLeaveTime.TimeOfDay);
+            if (isInEarlyTraffic || isInLateTraffic)
             {
-                discount = discount > 1 ? 1 : discount;
+                discount = discount >= 1 ? 1 : discount;
             }
             else
             {
-                discount = discount > 0.95 ? 0.95 : discount;
+                discount = discount >= 0.95 ? 0.95 : discount;
             }
 
             return tickePrice * discount;
 
         }
 
-        public double calculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double CalculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
-            double price = calculateTicketPrice(tickePrice, trainLeaveTime, withChild, card);
+            double price = CalculateTicketPrice(tickePrice, trainLeaveTime, withChild, card);
             return isTwoWay ? 2 * price : price;
         }
 
-        public Ticket createTicket(Train train, double price, DateTime date)
+        public Ticket AddTicket(Train train, double price, DateTime date)
         {
             Ticket ticket = new Ticket { DepartureDate = date, Price = price, Train = train, TrainId=train.Id };
             _trainSystemContext.Ticket.Add(ticket);

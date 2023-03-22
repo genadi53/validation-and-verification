@@ -38,9 +38,9 @@ namespace VV
             DateTime trainLeaveTimeTraficStart2 = new DateTime(2023, 3, 12, 7, 30, 0);
             DateTime trainLeaveTimeTraficStart3 = new DateTime(2023, 3, 12, 7, 31, 0);
 
-            var result1 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficStart1, withChild, null);
-            var result2 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficStart2, withChild, null);
-            var result3 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficStart3, withChild, null);
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficStart1, withChild, null);
+            var result2 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficStart2, withChild, null);
+            var result3 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficStart3, withChild, null);
 
             Assert.Multiple(() =>
             {
@@ -65,9 +65,9 @@ namespace VV
             DateTime trainLeaveTimeTraficEnd3 = new DateTime(2023, 3, 12, 19, 31, 0);
 
 
-            var result1 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd1, withChild, null);
-            var result2 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd2, withChild, null);
-            var result3 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd3, withChild, null);
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd1, withChild, null);
+            var result2 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd2, withChild, null);
+            var result3 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTimeTraficEnd3, withChild, null);
 
             //Console.WriteLine(result1);
             //Console.WriteLine(result2);
@@ -85,7 +85,7 @@ namespace VV
 
         [Test]
         [Category("Trafic")]
-        public void caluculateTicketPriceNotyInTrafic()
+        public void caluculateTicketPriceNotInTrafic()
         {
             double initialPrice = 10.00;
             double expectedPriceNotInTrafic = 9.50;
@@ -97,9 +97,9 @@ namespace VV
             DateTime trainLeaveTime3 = new DateTime(2023, 3, 12, 20, 00, 0);
 
 
-            var result1 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
-            var result2 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
-            var result3 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
+            var result2 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
+            var result3 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
 
             //Console.WriteLine(result1);
             //Console.WriteLine(result2);
@@ -126,8 +126,8 @@ namespace VV
             DateTime trainLeaveTime1 = new DateTime(2023, 3, 12, 9, 30, 0);
             DateTime trainLeaveTime2 = new DateTime(2023, 3, 12, 22, 00, 0);
 
-            var result1 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, seniorCard);
-            var result2 = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, seniorCard);
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, seniorCard);
+            var result2 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, seniorCard);
 
             Console.WriteLine(result1);
             Console.WriteLine(result2);
@@ -151,8 +151,8 @@ namespace VV
 
             DateTime trainLeaveTime1 = new DateTime(2023, 3, 12, 9, 30, 0);
 
-            var resultWithCard = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, familyCard);
-            var resultWithoutCard = _ticketService.calculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
+            var resultWithCard = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, familyCard);
+            var resultWithoutCard = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime1, withChild, null);
 
             Console.WriteLine(resultWithCard);
             Console.WriteLine(resultWithoutCard);
@@ -162,6 +162,22 @@ namespace VV
                 Assert.That(resultWithCard, Is.EqualTo(expectedPriceWithCard));
                 Assert.That(resultWithoutCard, Is.EqualTo(expectedPriceWithoutCard));
             });
+        }
+
+        [Test]
+        [Category("Invalid data")]
+        public void caluculateTicketPriceInvalid()
+        {
+            double initialPrice = 0;
+            double expectedReturn = -1;
+
+            bool withChild = false;
+
+            DateTime trainLeaveTime = new DateTime(2023, 3, 19, 7, 29, 0);
+
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, trainLeaveTime, withChild, null);
+
+            Assert.That(result1, Is.EqualTo(expectedReturn));
         }
     }
 }

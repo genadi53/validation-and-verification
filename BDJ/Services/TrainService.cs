@@ -10,13 +10,13 @@ namespace BDJ.Services
     public class TrainService
     {
         private readonly TrainSystemContext _trainSystemContext = new TrainSystemContext();
-        List<string> cityNames = new List<string> {
+        private readonly List<string> cityNames = new List<string> {
                 "Sofia", "Plovdiv", "Varna", "Burgas",
                 "Stara Zagora", "Ruse", "Pleven", "Sliven",
                 "Pernik", "Dobrich", "Sliven",
                 "Veliko Tarnovo", "Vratsa", "Blagoevgrad", "Haskovo"
         };
-        List<Tuple<string, string>> cityPairs = new List<Tuple<string, string>>();
+        private readonly List<Tuple<string, string>> cityPairs = new List<Tuple<string, string>>();
 
 
         public TrainService(TrainSystemContext context)
@@ -24,19 +24,19 @@ namespace BDJ.Services
             _trainSystemContext = context;
         }
 
-        public IQueryable<Train> searchTrainByDestination(string destination)
+        public IQueryable<Train> SearchTrainByDestination(string destination)
         {
             return _trainSystemContext.Trains.OrderBy(train => train.DepartureDate)
-                .Where(train => train.DestinationStation.Equals(destination)); ;
+                .Where(train => train.DestinationStation.Equals(destination));
         }
 
-        public IQueryable<Train> searchTrainByDepartureDate(DateTime date)
+        public IQueryable<Train> SearchTrainByDepartureDate(DateTime date)
         {
             return _trainSystemContext.Trains.Where(train => train.DepartureDate.Equals(date));
         }
 
 
-        public IQueryable<Train> searchTrainByDateAndDestination(string destination, DateTime date)
+        public IQueryable<Train> SearchTrainByDateAndDestination(string destination, DateTime date)
         {
 
 
@@ -49,14 +49,14 @@ namespace BDJ.Services
             return trains;
         }
 
-        public void createTrain(int seats, string staringStation, string destiinationStation, DateTime date)
+        public void AddTrain(int seats, string staringStation, string destiinationStation, DateTime date)
         {
             var train = new Train { DepartureStation = staringStation, DestinationStation = destiinationStation, DepartureDate = date, Seats = seats };
             _trainSystemContext.Trains.Add(train);
             _trainSystemContext.SaveChanges();
         }
 
-        private void generateCityPairs()
+        private void GenerateCityPairs()
         {
             var random = new Random();
             for (int i = 0; i < cityNames.Count; i++)
@@ -74,16 +74,15 @@ namespace BDJ.Services
             }
         }
 
-        public void mockDailyTrains()
+        public void MockDailyTrains()
         {
 
-            generateCityPairs();
+            GenerateCityPairs();
 
             var random = new Random();
             foreach (var pair in cityPairs)
             {
                 Console.WriteLine($"{pair.Item1} - {pair.Item2}");
-                //createTrain(100, destinations[i], destinations[(i + 1)], );
                 var train = new Train { DepartureStation = pair.Item1, DestinationStation = pair.Item2, DepartureDate = DateTime.Today.AddHours(random.Next(24)), Seats = 100 };
                 _trainSystemContext.Trains.Add(train);
                 _trainSystemContext.SaveChanges();

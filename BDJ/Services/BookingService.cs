@@ -22,10 +22,10 @@ namespace BDJ.Services
         }
 
 
-        public void bookTicket(User user, string departureStation, string destination, double price, DateTime date)
+        public void BookTicket(User user, string departureStation, string destination, double price, DateTime date) // bool withChild
         {
 
-            var trains = _trainService.searchTrainByDateAndDestination(destination, date);
+            var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
 
             Console.WriteLine(trains.ToList().Count);
 
@@ -41,7 +41,9 @@ namespace BDJ.Services
 
             Console.WriteLine(train.ToString());
 
-            var ticket = _ticketService.createTicket(train, price, date);
+            //var priceWithDiscount = _ticketService.CalculateTicketPrice(price, date, withChild, user.Card);
+
+            var ticket = _ticketService.AddTicket(train, price, date);
             Console.WriteLine(ticket.ToString());
 
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, active = true };
@@ -54,7 +56,7 @@ namespace BDJ.Services
             _trainSystemContext.SaveChanges();
         }
     
-        public void printAllBookings()
+        public void PrintAllBookings()
         {
             foreach (var booking in _trainSystemContext.Bookings.ToList())
             {

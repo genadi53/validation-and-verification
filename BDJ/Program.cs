@@ -12,7 +12,7 @@ Console.WriteLine(db.DbPath);
 BookingService bookingService = new BookingService(db);
 UserService userService = new UserService(db);
 TrainService trainService = new TrainService(db);
-//trainService.mockDailyTrains();
+//trainService.MockDailyTrains();
 
 foreach (var t in db.Trains.ToList())
 {
@@ -20,7 +20,7 @@ foreach (var t in db.Trains.ToList())
 }
 
 // "3/14/2023 11:00:00 PM"
-//bookingService.bookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTime(2023, 3, 14, 23 ,0 ,0));
+//bookingService.BookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTime(2023, 3, 14, 23 ,0 ,0));
 
 //foreach (var t in db.Users.ToList())
 //{
@@ -28,7 +28,7 @@ foreach (var t in db.Trains.ToList())
 //}
 
 
-bookingService.printAllBookings();
+bookingService.PrintAllBookings();
 
 
 //// Update

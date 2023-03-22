@@ -17,7 +17,7 @@ namespace BDJ.Services
         }
 
 
-        public User? addUser(string name, int age, DiscountCard? card)
+        public User? AddUser(string name, int age, DiscountCard? card)
         {
             var user = new User { Name = name, Age = age, Card = card };
             _trainSystemContext.Users.Add(user);
@@ -25,7 +25,7 @@ namespace BDJ.Services
             return user;
         }
 
-        public User? searchUserById(int id)
+        public User? SearchUserById(int id)
         {
             return _trainSystemContext.Users.FirstOrDefault(u => u.Id == id);
         }
