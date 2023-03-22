@@ -27,9 +27,11 @@ foreach (var t in db.Trains.ToList())
 //    Console.WriteLine($"{t.Id} - {t.Name} - {t.Age}");
 //}
 
-
+var user = db.Users.First(u => u.Bookings.ToList().Count > 0);
+Console.WriteLine($"{user.Id} - {user.Name}");
 bookingService.PrintAllBookings();
-
+bookingService.CancelBooking(user, "Haskovo", "Pernik", new DateTime(2023, 3, 14, 23, 0, 0));
+bookingService.PrintAllBookings();
 
 //// Update
 //Console.WriteLine("Updating the blog and adding a post");

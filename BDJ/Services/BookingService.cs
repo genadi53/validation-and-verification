@@ -10,9 +10,9 @@ namespace BDJ.Services
     public class BookingService
     {
         private readonly TrainSystemContext _trainSystemContext;
-        private TicketService _ticketService;
-        private TrainService _trainService;
-        private UserService _userService;
+        private readonly TicketService _ticketService;
+        private readonly TrainService _trainService;
+        private readonly UserService _userService;
         public BookingService(TrainSystemContext trainSystemContext)
         {
             _trainSystemContext = trainSystemContext;
@@ -55,7 +55,7 @@ namespace BDJ.Services
             _trainSystemContext.Bookings.Add(booking);
             _trainSystemContext.SaveChanges();
         }
-    
+
         public void PrintAllBookings()
         {
             foreach (var booking in _trainSystemContext.Bookings.ToList())
@@ -64,12 +64,68 @@ namespace BDJ.Services
                 _trainSystemContext.Entry(booking).Reference(b => b.User).Load();
 
                 Console.WriteLine($"Booking with id {booking.Id} was booked by {booking.User.Name}, who travels with ticket N{booking.TicketId} going to {booking.Ticket.Train.DestinationStation} " +
-                    $"from {booking.Ticket.Train.DepartureStation} on {booking.Ticket.Train.DepartureDate}");
+                    $"from {booking.Ticket.Train.DepartureStation} on {booking.Ticket.Train.DepartureDate} is {booking.active}");
             }
         }
 
 
-        //cancel booking
+        public void CancelBooking(User user, string departureStation, string destination, DateTime date)
+        {
+            var foundUser = _userService.SearchUserById(user.Id);
+
+            if (foundUser == null)
+            {
+                Console.WriteLine("No Such User!");
+                return;
+            }
+
+            //var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
+            //if (trains == null || trains.ToList().Count == 0)
+            //{
+            //    Console.WriteLine("Trains Not Found!");
+            //    return;
+            //}
+
+            _trainSystemContext.Entry(user).Collection(u => u.Bookings).Load();
+            var booking = user.Bookings.ToList().First((booking) =>
+            {
+                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                _trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
+                //Console.WriteLine(booking.Id);
+                //Console.WriteLine(booking.Ticket.Train.DepartureStation);
+                //Console.WriteLine(booking.Ticket.Train.DestinationStation);
+                //Console.WriteLine(booking.Ticket.DepartureDate);
+
+                if (booking.Ticket.Train.DestinationStation == destination && booking.Ticket.Train.DepartureStation == departureStation && booking.Ticket.DepartureDate == date)
+                {
+                    return true;
+                }
+                return false;
+            });
+
+            if(booking == null)
+            {
+                Console.WriteLine("No Bookings Found!");
+                    return;
+            }
+
+            Console.WriteLine(booking.Id);
+            Console.WriteLine(booking.Ticket.Train.DepartureStation);
+            Console.WriteLine(booking.Ticket.Train.DestinationStation);
+            Console.WriteLine(booking.Ticket.DepartureDate);
+
+           
+            if(booking.Ticket.DepartureDate >= DateTime.Now)
+            {
+                booking.active = false;
+                _trainSystemContext.SaveChanges();
+            } else
+            {
+                Console.WriteLine("Booking Date is passed Cancellation.");
+            }
+
+        }
+
         //change booking date if its still active
 
     }

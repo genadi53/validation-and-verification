@@ -9,7 +9,7 @@ namespace BDJ.Services
 {
     public class TrainService
     {
-        private readonly TrainSystemContext _trainSystemContext = new TrainSystemContext();
+        private readonly TrainSystemContext _trainSystemContext;
         private readonly List<string> cityNames = new List<string> {
                 "Sofia", "Plovdiv", "Varna", "Burgas",
                 "Stara Zagora", "Ruse", "Pleven", "Sliven",
