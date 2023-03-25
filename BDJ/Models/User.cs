@@ -23,8 +23,5 @@ namespace BDJ.Models
         {
            Bookings = new HashSet<Booking>();
         }
-
-
-
     }
 }

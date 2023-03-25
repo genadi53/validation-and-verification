@@ -26,31 +26,31 @@ namespace BDJ.Services
         public void BookTicket(User user, string departureStation, string destination, double price, DateTime date) // bool withChild
         {
 
-            var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
+            var trains = _trainService.SearchTrainByDateAndDestination(destination, date).ToList();
 
             Console.WriteLine(trains.ToList().Count);
 
-
-
-            if (trains == null)
+            if (trains == null || trains.Count <= 0)
             {
                 Console.WriteLine($"No Trains found going to {destination} on {date}");
                 return;
             }
 
             var train = trains.First();
-
-            Console.WriteLine(train.ToString());
+            Console.WriteLine($"{train.Id} - {train.DepartureDate} - {train.DestinationStation} - {train.DepartureDate}");
 
             //var priceWithDiscount = _ticketService.CalculateTicketPrice(price, date, withChild, user.Card);
 
-            var ticket = _ticketService.AddTicket(train, price, date);
-            Console.WriteLine(ticket.ToString());
+            var ticket = _ticketService.AddTicket(user, train, price, date);
+            Console.WriteLine($"{ticket.Id} - {ticket.DepartureDate} - {ticket.Price}");
 
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, active = true };
-            Console.WriteLine(booking.ToString());
+            Console.WriteLine($"{booking.Id} - {booking.TicketId} - {booking.UserId} - {booking.active}");
 
-            user.Tickets.Add(ticket);
+            //_trainSystemContext.Users.First(u => u.Id == user.Id).Bookings.Add(booking);
+            //_trainSystemContext.Users.First(u => u.Id == user.Id).Tickets.Add(ticket);
+
+            //user.Tickets.Add(ticket);
             user.Bookings.Add(booking);
 
             _trainSystemContext.Bookings.Add(booking);
@@ -59,14 +59,28 @@ namespace BDJ.Services
 
         public void PrintAllBookings()
         {
-            foreach (var booking in _trainSystemContext.Bookings.ToList())
-            {
-                _trainSystemContext.Entry(booking).Reference(b => b.Ticket).Load();
-                _trainSystemContext.Entry(booking).Reference(b => b.User).Load();
+            //_trainSystemContext.ChangeTracker.Clear();
+            //var bookings = _trainSystemContext.Bookings
+            //.Include(b => b.Ticket)
+            //.ThenInclude(t => t.Train)
+            //.Include(b => b.User)
+            //.ToList();
 
-                Console.WriteLine($"Booking with id {booking.Id} was booked by {booking.User.Name}, who travels with ticket N{booking.TicketId} going to {booking.Ticket.Train.DestinationStation} " +
-                    $"from {booking.Ticket.Train.DepartureStation} on {booking.Ticket.Train.DepartureDate} is {booking.active}");
+            Console.WriteLine("\n*********************************");
+            foreach (var booking in _trainSystemContext.Bookings)
+            {
+                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                _trainSystemContext.Entry(booking.Ticket).Reference(t => t.Train).Load();
+                //_trainSystemContext.Entry(booking).Reload();
+                
+                Console.WriteLine($"Booking with id {booking.Id} was booked by {booking.User.Name}, " +
+                    $"who travels with ticket N{booking.TicketId} " +
+                    $"going to {booking.Ticket.Train.DestinationStation} " +
+                    $"from {booking.Ticket.Train.DepartureStation} " +
+                    $"on {booking.Ticket.Train.DepartureDate} " +
+                    $"is {booking.active}");
             }
+            Console.WriteLine("*********************************\n");
         }
 
 
@@ -80,17 +94,29 @@ namespace BDJ.Services
                 return;
             }
 
-            _trainSystemContext.Entry(user).Collection(u => u.Bookings).Load();
-            var booking = user.Bookings.ToList().First((booking) =>
-            {
-                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-                _trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
-                Console.WriteLine(booking.Id);
-                Console.WriteLine(booking.Ticket.Train.DepartureStation);
-                Console.WriteLine(booking.Ticket.Train.DestinationStation);
-                Console.WriteLine(booking.Ticket.DepartureDate);
+            _trainSystemContext.Entry(foundUser).Collection(u => u.Bookings).Load();
 
-                if (booking.Ticket.Train.DestinationStation == destination && booking.Ticket.Train.DepartureStation == departureStation && booking.Ticket.DepartureDate == date)
+            var booking = _trainSystemContext.Bookings
+           .Include(b => b.Ticket)
+           .ThenInclude(t => t.Train)
+           .Include(b => b.User)
+           .ToList()
+           .FirstOrDefault((booking) =>
+            {
+                //_trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                //_trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
+                //Console.WriteLine(booking.Id);
+                //Console.WriteLine(booking.Ticket.Train.DepartureStation == departureStation);
+                //Console.WriteLine(booking.Ticket.Train.DestinationStation == destination);
+                //Console.WriteLine($"{booking.Ticket.DepartureDate} == {date}");
+                //Console.WriteLine(DateTime.Equals(booking.Ticket.DepartureDate, date));
+                //Console.WriteLine(Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, date));
+
+
+                if (booking.Ticket.Train.DestinationStation == destination 
+                    && booking.Ticket.Train.DepartureStation == departureStation 
+                    && Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, date)
+                )
                 {
                     return true;
                 }
@@ -119,7 +145,7 @@ namespace BDJ.Services
 
         }
 
-        public async void UpdateBookingDate(User user, string departureStation, string destination, DateTime oldDate, DateTime newDate)
+        public void UpdateBookingDate(User user, string departureStation, string destination, DateTime oldDate, DateTime newDate)
         {
             var foundUser = _userService.SearchUserById(user.Id);
 
@@ -129,25 +155,35 @@ namespace BDJ.Services
                 return;
             }
 
-            _trainSystemContext.Entry(user).Collection(u => u.Bookings).Load();
-            var booking = user.Bookings.First();
-            //var booking = user.Bookings.ToList().First((booking) =>
-            //{
-            //    Console.WriteLine("aaa");
-            //    _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-            //    _trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
+            _trainSystemContext.Entry(foundUser).Collection(u => u.Bookings).Load();
+            //var booking = foundUser.Bookings.FirstOrDefault();
 
 
-            //    //if (booking.Ticket.Train.DestinationStation == destination && booking.Ticket.Train.DepartureStation == departureStation && booking.Ticket.DepartureDate == oldDate)
-            //    //{
-            //        Console.WriteLine(booking.Id);
-            //        Console.WriteLine(booking.Ticket.Train.DepartureStation);
-            //        Console.WriteLine(booking.Ticket.Train.DestinationStation);
-            //        Console.WriteLine(booking.Ticket.DepartureDate);
-            //        return true;
-            //    //}
-            //    //return false;
-            //});
+
+            var booking = user.Bookings.ToList().First((booking) =>
+            {
+                Console.WriteLine("aaa");
+                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                _trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
+
+
+                //Console.WriteLine(booking.Id);
+                //Console.WriteLine(booking.Ticket.Train.DepartureStation == departureStation);
+                //Console.WriteLine(booking.Ticket.Train.DestinationStation == destination);
+                //Console.WriteLine($"{booking.Ticket.DepartureDate} == {date}");
+                //Console.WriteLine(DateTime.Equals(booking.Ticket.DepartureDate, date));
+                //Console.WriteLine(Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, date));
+
+
+                if (booking.Ticket.Train.DestinationStation == destination
+                    && booking.Ticket.Train.DepartureStation == departureStation
+                    && Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, oldDate)
+                )
+                {
+                    return true;
+                }
+                return false;
+            });
 
             if (booking == null)
             {
@@ -155,31 +191,59 @@ namespace BDJ.Services
                 return;
             }
 
-            _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-            booking.Ticket.DepartureDate = newDate;
+            Console.WriteLine($"{booking.Id} - {booking.Ticket.Train.DepartureStation} - {booking.Ticket.Train.DestinationStation} " +
+                 $"- {booking.Ticket.DepartureDate}");
 
-            _trainSystemContext.Users.Update(user);
-            _trainSystemContext.Bookings.Update(booking);
-            _trainSystemContext.Ticket.Update(booking.Ticket);
-            
-            _trainSystemContext.SaveChanges();
-            await _trainSystemContext.SaveChangesAsync();
-            Console.WriteLine("Updated");
+            if (booking.Ticket.DepartureDate >= DateTime.Now)
+            {
+                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                booking.Ticket.DepartureDate = newDate;
 
-            //if (booking.Ticket.DepartureDate >= DateTime.Now)
-            //{
-            //    _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-            //    booking.Ticket.DepartureDate = newDate;
-            //    _trainSystemContext.Bookings.Update(booking);
-            //    _trainSystemContext.Ticket.Update(booking.Ticket);
-            //    _trainSystemContext.SaveChanges();
-            //    Console.WriteLine("Updated");
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Booking Date is passed and it can't be updated.");
-            //}
+                _trainSystemContext.Bookings.First(b => b.Id == booking.Id).Ticket.DepartureDate = newDate;
+                _trainSystemContext.Bookings.Update(booking);
 
+                var ticket = _trainSystemContext.Ticket.First(b => b.Id == booking.TicketId);
+                ticket.DepartureDate = newDate;
+                _trainSystemContext.Ticket.Update(ticket);
+
+                _trainSystemContext.SaveChanges();
+
+                Console.WriteLine(ticket.DepartureDate);
+                Console.WriteLine("Updated");
+
+
+                //var t = _trainSystemContext.Ticket.First(t => t.Id == booking.TicketId);
+                //Console.WriteLine($"{t.DepartureDate} - {t.Id}");
+                //t.DepartureDate = newDate;
+
+                //_trainSystemContext.Entry(booking.Ticket).State = EntityState.Detached;
+                //booking.Ticket.UpdateDate(newDate);
+                //_trainSystemContext.Entry(booking.Ticket).State = EntityState.Modified;
+
+
+                //_trainSystemContext.SaveChanges();
+
+                //_trainSystemContext.Users.Update(foundUser);
+                //_trainSystemContext.Bookings.Update(booking);
+                //_trainSystemContext.Ticket.Update(booking.Ticket);
+
+                //_trainSystemContext.SaveChanges();
+                //Console.WriteLine("Updated");
+            }
+            else
+            {
+                Console.WriteLine("Booking Date is passed and it can't be updated.");
+            }
+
+            //print to be sure
+            foreach (var b in foundUser.Bookings)
+            {
+                _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
+                _trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
+                Console.WriteLine($"{b.Id} - {b.Ticket.Train.DepartureStation} - {b.Ticket.Train.DestinationStation} " +
+                    $"- {b.Ticket.DepartureDate}");
+
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using BDJ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDJ.Migrations
 {
     [DbContext(typeof(TrainSystemContext))]
-    partial class TrainSystemContextModelSnapshot : ModelSnapshot
+    [Migration("20230323200055_InitialCreate_v3")]
+    partial class InitialCreate_v3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.3");
@@ -77,7 +80,7 @@ namespace BDJ.Migrations
                     b.Property<int>("TrainId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -175,15 +178,11 @@ namespace BDJ.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BDJ.Models.User", "User")
+                    b.HasOne("BDJ.Models.User", null)
                         .WithMany("Tickets")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Train");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BDJ.Models.Train", b =>

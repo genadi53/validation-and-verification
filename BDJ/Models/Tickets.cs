@@ -18,5 +18,14 @@ namespace BDJ.Models
         [ForeignKey(nameof(Train))]
         public int TrainId { get; set; }
         public virtual Train Train { get; set; }
+
+        [ForeignKey(nameof(User))]
+        public int UserId { get; set; }
+        public virtual User User { get; set; }
+
+        internal void UpdateDate(DateTime date)
+        {
+            DepartureDate = date;
+        }
     }
 }

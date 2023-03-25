@@ -16,29 +16,64 @@ UserService userService = new UserService(db);
 TrainService trainService = new TrainService(db);
 //trainService.MockDailyTrains();
 
-//userService.Register("test12343", "test12343", 21);
-userService.Login("test12343", "test12343");
+//userService.Register("test", "test", 21);
+//userService.Login("test", "test");
 
 //foreach (var t in db.Trains.ToList())
 //{
 //    Console.WriteLine($"{t.Id} - from {t.DepartureStation} to {t.DestinationStation} on {t.DepartureDate}");
 //}
 
-// "3/14/2023 11:00:00 PM"
-// Haskovo to Burgas on 3/22/2023 2:00:00 AM
-//bookingService.BookTicket(db.Users.First(), "Haskovo", "Pernik", 100, new DateTime(2023, 3, 14, 23, 0, 0));
 
 //foreach (var t in db.Users.ToList())
 //{
 //    Console.WriteLine($"{t.Id} - {t.Name} - {t.Age}");
 //}
 
-//var user = db.Users.First(u => u.Bookings.ToList().Count > 0);
+var user = db.Users.First();
 //Console.WriteLine($"{user.Id} - {user.Name}");
+// Plovdiv to Pernik on 3/23/2023 2:00:00 AM
+//bookingService.BookTicket(user, "Plovdiv", "Pernik", 100, new DateTime(2023, 3, 23, 2, 0, 0));
+
+Console.WriteLine("\n*********************************");
+foreach (var booking in db.Bookings)
+{
+    db.Entry(booking).Reference(booking => booking.Ticket).Load();
+    db.Entry(booking.Ticket).Reference(t => t.Train).Load();
+    //_trainSystemContext.Entry(booking).Reload();
+
+    Console.WriteLine($"{booking.Id} was booked by {booking.User.Name}, " +
+        $"ticket N{booking.TicketId} " +
+        $"from {booking.Ticket.Train.DepartureStation} " +
+        $"to {booking.Ticket.Train.DestinationStation} " +
+        $"on {booking.Ticket.Train.DepartureDate} " +
+        $"is {booking.active}");
+}
+Console.WriteLine("*********************************\n");
+
+
+foreach (var booking in db.Bookings)
+{
+    db.Entry(booking).Reference(booking => booking.Ticket).Load();
+    db.Entry(booking.Ticket).Reference(t => t.Train).Load();
+
+    Console.WriteLine($"{booking.Id} - {booking.Ticket.Train.DepartureStation} - {booking.Ticket.Train.DestinationStation} " +
+         $"- {booking.Ticket.DepartureDate} - {booking.active}");
+}
+
 //bookingService.PrintAllBookings();
-////bookingService.CancelBooking(user, "Haskovo", "Pernik", new DateTime(2023, 3, 14, 23, 0, 0));
-//bookingService.UpdateBookingDate(user, "Haskovo", "Pernik", new DateTime(2023, 3, 22, 20, 48, 34), DateTime.Now);
+bookingService.CancelBooking(user, "Plovdiv", "Pernik", new DateTime(2023, 3, 23, 22, 46, 17));
+//bookingService.UpdateBookingDate(user!, "Plovdiv", "Pernik", new DateTime(2023, 3, 22, 2, 0, 0), DateTime.Now);
 //bookingService.PrintAllBookings();
+
+Console.WriteLine("---- User's bookings -----");
+foreach(var booking in user.Bookings)
+{
+    Console.WriteLine($"{booking.Id} - {booking.Ticket.Train.DepartureStation} - {booking.Ticket.Train.DestinationStation} " +
+         $"- {booking.Ticket.DepartureDate} - {booking.active}");
+}
+
+bookingService.PrintAllBookings();
 
 //// Update
 //Console.WriteLine("Updating the blog and adding a post");

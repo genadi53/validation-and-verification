@@ -67,10 +67,11 @@ namespace BDJ.Services
             return isTwoWay ? 2 * price : price;
         }
 
-        public Ticket AddTicket(Train train, double price, DateTime date)
+        public Ticket AddTicket(User user, Train train, double price, DateTime date)
         {
-            Ticket ticket = new Ticket { DepartureDate = date, Price = price, Train = train, TrainId=train.Id };
+            Ticket ticket = new Ticket { DepartureDate = date, Price = price, Train = train, TrainId=train.Id, UserId=user.Id, User=user };
             _trainSystemContext.Ticket.Add(ticket);
+            _trainSystemContext.Users.First(u => u.Id == user.Id).Tickets.Add(ticket);
             _trainSystemContext.SaveChanges();
             return ticket;
         }
