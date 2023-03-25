@@ -20,9 +20,9 @@ namespace BDJ.Services
             _trainSystemContext = trainSystemContext;
         }
 
-        public double CalculateTicketPrice(double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double CalculateTicketPrice(double tickePrice, int numberOfTickets, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
-            if (tickePrice <= 0) return -1;
+            if (tickePrice <= 0 || numberOfTickets <= 0) return -1;
 
             double discount = 1;
             if (withChild)
@@ -57,13 +57,19 @@ namespace BDJ.Services
                 discount = discount >= 0.95 ? 0.95 : discount;
             }
 
-            return tickePrice * discount;
+            return numberOfTickets * tickePrice * discount;
 
         }
 
-        public double CalculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
+        public double CalculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, int numberOfTickets, DateTime trainLeaveTime, bool withChild, DiscountCard? card)
         {
-            double price = CalculateTicketPrice(tickePrice, trainLeaveTime, withChild, card);
+            double price = CalculateTicketPrice(tickePrice, numberOfTickets, trainLeaveTime, withChild, card);
+
+            if(price < 0)
+            {
+                return -1;
+            }
+
             return isTwoWay ? 2 * price : price;
         }
 
