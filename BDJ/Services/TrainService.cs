@@ -1,6 +1,7 @@
 ﻿using BDJ.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ namespace BDJ.Services
 {
     public class TrainService
     {
+
         private readonly TrainSystemContext _trainSystemContext;
         private readonly List<string> cityNames = new List<string> {
                 "Sofia", "Plovdiv", "Varna", "Burgas",
@@ -27,24 +29,21 @@ namespace BDJ.Services
         public IQueryable<Train> SearchTrainByDestination(string destination)
         {
             return _trainSystemContext.Trains.OrderBy(train => train.DepartureDate)
-                .Where(train => train.DestinationStation.Equals(destination));
+                .Where(train => train.DestinationStation.ToLower().Equals(destination.ToLower())
+                  //&& train.DepartureDate.DayOfYear >= DateTime.Now.DayOfYear
+                );
         }
 
         public IQueryable<Train> SearchTrainByDepartureDate(DateTime date)
         {
-            return _trainSystemContext.Trains.Where(train => train.DepartureDate.Equals(date));
+            return _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == date.DayOfYear);
         }
 
 
         public IQueryable<Train> SearchTrainByDateAndDestination(string destination, DateTime date)
         {
-            
-            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.Equals(destination) && train.DepartureDate.Equals(date));
-            foreach (var t in trains)
-            {
-                Console.WriteLine($"{t.DepartureDate} - from {t.DepartureStation} to {t.DestinationStation}");
-            }
 
+            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.ToLower().Equals(destination.ToLower()) && train.DepartureDate.DayOfYear == date.DayOfYear);
             return trains;
         }
 
@@ -89,17 +88,30 @@ namespace BDJ.Services
 
         }
 
-       public void PrintDailyTrains()
+        public void PrintDailyTrains()
         {
             var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Today.DayOfYear);
-            foreach(var train in trains)
+            TableFormatPrinter.PrintLine();
+            TableFormatPrinter.PrintRow("Id", "Start", "Destination", "Date");
+            TableFormatPrinter.PrintLine();
+            foreach (var train in trains)
             {
-                Console.WriteLine($"Train with ID {train.Id}" +
-                    $"is going from {train.DepartureDate} " +
-                    $"to {train.DestinationStation}" +
-                    $"on {train.DepartureDate}");
+                TableFormatPrinter.PrintRow($"{train.Id}", $"{train.DepartureStation}", $"{train.DestinationStation}", $"{train.DepartureDate}");
+                TableFormatPrinter.PrintLine();
+            }
+        }
+
+        public void PrintGivenTrains(IQueryable<Train>? trains)
+        {
+            if (trains == null) return;
+            TableFormatPrinter.PrintLine();
+            TableFormatPrinter.PrintRow("Id", "Start", "Destination", "Date");
+            TableFormatPrinter.PrintLine();
+            foreach (var train in trains)
+            {
+                TableFormatPrinter.PrintRow($"{train.Id}", $"{train.DepartureStation}", $"{train.DestinationStation}", $"{train.DepartureDate}");
+                TableFormatPrinter.PrintLine();
             }
         }
     }
-
 }

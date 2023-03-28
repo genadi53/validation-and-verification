@@ -44,8 +44,8 @@ namespace BDJ.Services
             var ticket = _ticketService.AddTicket(user, train, price, date);
             Console.WriteLine($"{ticket.Id} - {ticket.DepartureDate} - {ticket.Price}");
 
-            var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, active = true };
-            Console.WriteLine($"{booking.Id} - {booking.TicketId} - {booking.UserId} - {booking.active}");
+            var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, Active = true };
+            Console.WriteLine($"{booking.Id} - {booking.TicketId} - {booking.UserId} - {booking.Active}");
 
             //_trainSystemContext.Users.First(u => u.Id == user.Id).Bookings.Add(booking);
             //_trainSystemContext.Users.First(u => u.Id == user.Id).Tickets.Add(ticket);
@@ -78,7 +78,7 @@ namespace BDJ.Services
                     $"going to {booking.Ticket.Train.DestinationStation} " +
                     $"from {booking.Ticket.Train.DepartureStation} " +
                     $"on {booking.Ticket.Train.DepartureDate} " +
-                    $"is {booking.active}");
+                    $"is {booking.Active}");
             }
             Console.WriteLine("*********************************\n");
         }
@@ -135,7 +135,7 @@ namespace BDJ.Services
 
             if (booking.Ticket.DepartureDate >= DateTime.Now)
             {
-                booking.active = false;
+                booking.Active = false;
                 _trainSystemContext.SaveChanges();
             }
             else

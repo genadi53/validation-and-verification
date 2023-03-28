@@ -1,4 +1,5 @@
 ﻿using BDJ.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace BDJ.Services
 
 
             var hashedPassword = HashPassword(password, savedSalt);
-            Console.WriteLine(hashedPassword);
+            //Console.WriteLine(hashedPassword);
 
             if (user.Password.Equals(String.Concat(hashedPassword, delimiter, savedSalt)))
             {
@@ -106,7 +107,7 @@ namespace BDJ.Services
         {
             var admin = _trainSystemContext.Users.FirstOrDefault(u => u.Id == adminId && u.IsAdmin);
 
-            if(admin == null)
+            if (admin == null)
             {
                 Console.WriteLine("No admin rights");
                 return null;
@@ -114,7 +115,7 @@ namespace BDJ.Services
 
             var userToUpdate = _trainSystemContext.Users.FirstOrDefault(u => u.Id == userId);
 
-            if(userToUpdate == null)
+            if (userToUpdate == null)
             {
                 Console.WriteLine("No such user!");
                 return null;
@@ -126,7 +127,7 @@ namespace BDJ.Services
                 Console.WriteLine("name");
             }
 
-            if(newAge != null && newAge > 0)
+            if (newAge != null && newAge > 0)
             {
                 userToUpdate.Age = (int)newAge;
                 Console.WriteLine("age");
@@ -171,6 +172,50 @@ namespace BDJ.Services
             _trainSystemContext.SaveChanges();
         }
 
+        public void PrintAllUserTickets(User user)
+        {
+            var tickets = user.Tickets;
+            if (tickets.Count > 0)
+            {
+                Console.WriteLine("User have no Tickets.");
+                return;
+            }
+
+            foreach (var ticket in tickets)
+            {
+                _trainSystemContext.Entry(ticket).Reference(t => t.Train).Load();
+                Console.WriteLine($"Ticket with id {ticket.Id}" +
+                    $"costs {ticket.Price}" +
+                    $"is to go from {ticket.Train.DepartureStation}" +
+                    $"to {ticket.Train.DestinationStation}" +
+                    $"on {ticket.DepartureDate}.");
+            }
+        }
+
+        public void PrintAllActiveUserTickets(User user)
+        {
+            var bookings = _trainSystemContext.Bookings
+               .Include(b => b.Ticket)
+               .ThenInclude(t => t.Train)
+               .Include(b => b.User)
+               .ToList()
+               .Where(b => b.UserId == user.Id && b.Active);
+
+            if (bookings == null)
+            {
+                Console.WriteLine("User have no booked Tickets.");
+                return;
+            }
+
+            foreach (var booking in bookings)
+            {
+                Console.WriteLine($"Ticket with id {booking.Ticket.Id}" +
+                    $"costs {booking.Ticket.Price}" +
+                    $"is to go from {booking.Ticket.Train.DepartureStation}" +
+                    $"to {booking.Ticket.Train.DestinationStation}" +
+                    $"on {booking.Ticket.DepartureDate}.");
+            }
+        }
 
         private static string GenerateHashedPassword(string password)
         {
@@ -180,8 +225,8 @@ namespace BDJ.Services
             // Hash the password with the salt
             string hashedPassword = HashPassword(password, salt);
 
-            Console.WriteLine("Salt: {0}", salt);
-            Console.WriteLine("Hashed Password: {0}", hashedPassword);
+            //Console.WriteLine("Salt: {0}", salt);
+            //Console.WriteLine("Hashed Password: {0}", hashedPassword);
 
             return String.Concat(hashedPassword, delimiter, salt);
         }
