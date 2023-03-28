@@ -46,10 +46,8 @@ namespace BDJ.Services
             }
 
             string? savedSalt = user.Password.Split(delimiter).Last();
-
-
-            Console.WriteLine($"saved pass : {user.Password}");
-            Console.WriteLine($"savedSalt : {savedSalt}");
+            //Console.WriteLine($"saved pass : {user.Password}");
+            //Console.WriteLine($"savedSalt : {savedSalt}");
 
 
             var hashedPassword = HashPassword(password, savedSalt);
@@ -57,13 +55,11 @@ namespace BDJ.Services
 
             if (user.Password.Equals(String.Concat(hashedPassword, delimiter, savedSalt)))
             {
-                Console.WriteLine("Welcome!");
                 return user;
             }
             else
             {
                 Console.WriteLine("Try logging again!");
-
                 return null;
             }
         }

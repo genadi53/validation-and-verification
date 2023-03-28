@@ -38,8 +38,7 @@ namespace BDJ.Services
 
         public IQueryable<Train> SearchTrainByDateAndDestination(string destination, DateTime date)
         {
-
-
+            
             IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.Equals(destination) && train.DepartureDate.Equals(date));
             foreach (var t in trains)
             {
@@ -88,6 +87,18 @@ namespace BDJ.Services
                 _trainSystemContext.SaveChanges();
             }
 
+        }
+
+       public void PrintDailyTrains()
+        {
+            var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Today.DayOfYear);
+            foreach(var train in trains)
+            {
+                Console.WriteLine($"Train with ID {train.Id}" +
+                    $"is going from {train.DepartureDate} " +
+                    $"to {train.DestinationStation}" +
+                    $"on {train.DepartureDate}");
+            }
         }
     }
 
