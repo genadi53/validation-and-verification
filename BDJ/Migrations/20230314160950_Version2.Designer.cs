@@ -32,7 +32,7 @@ namespace BDJ.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<bool>("active")
+                    b.Property<bool>("Active")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

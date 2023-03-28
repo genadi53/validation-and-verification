@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BDJ.Migrations
 {
     [DbContext(typeof(TrainSystemContext))]
-    [Migration("20230321073407_Virtualization")]
-    partial class Virtualization
+    [Migration("20230328144918_ActiveRename")]
+    partial class ActiveRename
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,13 +26,13 @@ namespace BDJ.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TicketId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Active")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -80,7 +80,7 @@ namespace BDJ.Migrations
                     b.Property<int>("TrainId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -133,6 +133,10 @@ namespace BDJ.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -174,11 +178,15 @@ namespace BDJ.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BDJ.Models.User", null)
+                    b.HasOne("BDJ.Models.User", "User")
                         .WithMany("Tickets")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Train");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BDJ.Models.Train", b =>

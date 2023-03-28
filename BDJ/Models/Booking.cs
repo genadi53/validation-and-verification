@@ -21,6 +21,6 @@ namespace BDJ.Models
         public int UserId { get; set; }
         public virtual User User { get; set; }
 
-        public bool active { get; set; }
+        public bool Active { get; set; }
     }
 }

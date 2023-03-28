@@ -23,13 +23,13 @@ namespace BDJ.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Active")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("TicketId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("active")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
