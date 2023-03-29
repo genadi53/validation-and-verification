@@ -39,11 +39,20 @@ namespace BDJ.Services
             return _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == date.DayOfYear);
         }
 
-
         public IQueryable<Train> SearchTrainByDateAndDestination(string destination, DateTime date)
         {
 
-            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.ToLower().Equals(destination.ToLower()) && train.DepartureDate.DayOfYear == date.DayOfYear);
+            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.ToLower().Equals(destination.ToLower())
+            && train.DepartureDate.DayOfYear == date.DayOfYear);
+            return trains;
+        }
+
+         public IQueryable<Train> SearchTrainByDateAndStations(string departureStation, string destination, DateTime date)
+        {
+
+            IQueryable<Train> trains = _trainSystemContext.Trains.Where(train => train.DestinationStation.ToLower().Equals(destination.ToLower())
+            && train.DepartureStation.ToLower().Equals(departureStation.ToLower())
+            && train.DepartureDate.DayOfYear == date.DayOfYear);
             return trains;
         }
 
@@ -90,7 +99,7 @@ namespace BDJ.Services
 
         public void PrintDailyTrains()
         {
-            var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Today.DayOfYear);
+            var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Now.DayOfYear).ToList();
             TableFormatPrinter.PrintLine();
             TableFormatPrinter.PrintRow("Id", "Start", "Destination", "Date");
             TableFormatPrinter.PrintLine();

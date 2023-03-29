@@ -100,17 +100,21 @@ namespace BDJ
                     Console.WriteLine("0. Exit");
                 };
 
-               
-
                 int option = GetUserChoice(printMenu);
                 switch (option)
                 {
                     case 1:
-                        LoginUser();
-                        break;
+                        {
+                            var user = LoginUser();
+                            _currentUser = user;
+                            break;
+                        }
                     case 2:
-                        RegisterUser();
-                        break;
+                        {
+                            var user = RegisterUser();
+                            _currentUser = user;
+                            break;
+                        }
                     case 0:
                         Console.WriteLine("Exiting...");
                         return;
@@ -122,6 +126,7 @@ namespace BDJ
                 Console.ReadKey();
             }
         }
+
         public void DisplayMainMenu()
         {
             while (_currentUser != null)
@@ -140,19 +145,20 @@ namespace BDJ
                     Console.WriteLine("5. Book ticket");
                     Console.WriteLine("6. Show all booked tickets");
                     Console.WriteLine("7. Show all Active tickets");
-                    Console.WriteLine("8. Cancel ticket");
-                    Console.WriteLine("9. Update ticket's date");
-                    Console.WriteLine("10. Profile");
+                    Console.WriteLine("8. Show all Canceled tickets");
+                    Console.WriteLine("9. Cancel ticket");
+                    Console.WriteLine("10. Update ticket's date");
+                    Console.WriteLine("11. Profile");
 
                     if (_currentUser.IsAdmin)
                     {
-                        Console.WriteLine("11. Mock trains");
-                        Console.WriteLine("12. Show all user profiles");
-                        Console.WriteLine("13. Search user profile by name");
-                        Console.WriteLine("14. Add new user profile");
-                        Console.WriteLine("15. Update user's profile");
-                        Console.WriteLine("16. give discount card");
-                        Console.WriteLine("17. book ticket to user");
+                        Console.WriteLine("12. Mock trains");
+                        Console.WriteLine("13. Show all user profiles");
+                        Console.WriteLine("14. Search user profile by name");
+                        Console.WriteLine("15. Add new user profile");
+                        Console.WriteLine("16. Update user's profile");
+                        Console.WriteLine("17. Add discount card to user");
+                        Console.WriteLine("18. Print all bookings");
                     }
 
                     Console.WriteLine("0. Exit");
@@ -167,7 +173,7 @@ namespace BDJ
                         break;
                     case 2:
                         {
-                            DateTime date = GetDateInput();
+                            DateTime date = Time.GetDateInput();
                             var trains = _trainService.SearchTrainByDepartureDate(date);
                             _trainService.PrintGivenTrains(trains);
                             break;
@@ -177,7 +183,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if(destination == null)
+                            if (destination == null)
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
@@ -197,10 +203,10 @@ namespace BDJ
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
                             }
-                            DateTime date = GetDateInput();
+                            DateTime date = Time.GetDateInput();
                             var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
                             _trainService.PrintGivenTrains(trains);
-                            break;
+                            break; 
                         }
                     case 5:
                         {
@@ -224,7 +230,7 @@ namespace BDJ
                             }
 
                             Console.WriteLine("Enter date for your ticket");
-                            DateTime date = GetDateInput();
+                            DateTime date = Time.GetDateInput();
                             _bookingService.BookTicket(_currentUser, departure, destination, price, date);
                             break;
                         }
@@ -232,43 +238,170 @@ namespace BDJ
                         _userService.PrintAllUserTickets(_currentUser);
                         break;
                     case 7:
-                        Console.WriteLine("7. Show all Active tickets");
                         _userService.PrintAllActiveUserTickets(_currentUser);
                         break;
                     case 8:
-                        Console.WriteLine("8. Cancel ticket");
-                        _bookingService.CancelBooking(_currentUser, "Plovdiv", "Pernik", new DateTime(2023, 3, 23, 22, 46, 17));
+                        _userService.PrintAllCanceledUserTickets(_currentUser);
                         break;
                     case 9:
-                        Console.WriteLine("9. Update ticket's date");
-                        _bookingService.UpdateBookingDate(_currentUser, "Plovdiv", "Pernik", new DateTime(2023, 3, 22, 2, 0, 0), DateTime.Now);
-                        break;
+                        {
+
+                            Console.WriteLine("Enter train departure station: ");
+                            string? departureStation = Console.ReadLine();
+
+                            if (departureStation == null)
+                            {
+                                Console.WriteLine("Departure station can not be empty!");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter train destination: ");
+                            string? destination = Console.ReadLine();
+
+                            if (destination == null)
+                            {
+                                Console.WriteLine("Destiantion can not be empty!");
+                                break;
+                            }
+
+                            DateTime date = Time.GetDateInput();
+                            _bookingService.CancelBooking(_currentUser, departureStation, destination, date);
+                            break;
+                        }
                     case 10:
-                        Console.WriteLine("10. Profile");
-                        string cardtype = _currentUser.Card != null ? _currentUser.Card.Type == "family" ? "family" : "senior" : "no";
-                        Console.WriteLine($"Logged in as {_currentUser.Name}, and have {cardtype} card");
-                        break;
+                        {
+
+                            Console.WriteLine("Enter train departure station: ");
+                            string? departureStation = Console.ReadLine();
+
+                            if (departureStation == null)
+                            {
+                                Console.WriteLine("Departure station can not be empty!");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter train destination: ");
+                            string? destination = Console.ReadLine();
+
+                            if (destination == null)
+                            {
+                                Console.WriteLine("Destiantion can not be empty!");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter old date: ");
+                            DateTime oldDate = Time.GetDateInput();
+
+                            Console.WriteLine("Enter new date: ");
+                            DateTime newDate = Time.GetDateInput();
+
+                            _bookingService.UpdateBookingDate(_currentUser, departureStation, destination, oldDate, newDate);
+                            break;
+                        }
                     case 11:
+                        {
+                            string cardtype = _currentUser.Card != null ? _currentUser.Card.Type == "family" ? "family" : "senior" : "no";
+                            Console.WriteLine($"Logged in as {_currentUser.Name}, and have {cardtype} card");
+                            break;
+                        }
+                    case 12:
                         _trainService.MockDailyTrains();
                         break;
-                    case 12:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("12. Show all user profiles");
-                        _bookingService.PrintAllBookings();
-                        break;
                     case 13:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("13. Search user profile by name");
+                        _userService.PrintAllUsers(_currentUser.Id);
                         break;
                     case 14:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("14. Add new user profile");
-                        break;
+                        {
+                            string? name = null;
+                            Console.WriteLine("Enter user's name: ");
+                            name = Console.ReadLine();
+                            if (name == null)
+                            {
+                                Console.WriteLine("Invalid Input. Try Again!");
+                                break;
+                            }
+
+                            var user = _userService.SearchUserByName(name);
+                            if (user == null)
+                            {
+                                Console.WriteLine("No such user!");
+                                break;
+                            }
+                            _userService.PrintUser(user);
+                            break;
+                        }
                     case 15:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("15. Update user's profile");
+                        RegisterUser();
                         break;
                     case 16:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("16. give discount card");
-                        break;
+                        {
+                            var userIdInput = 0;
+                            var age = 0;
+                            Console.WriteLine("Enter user id: ");
+                            if (!int.TryParse(Console.ReadLine(), out userIdInput))
+                            {
+                                Console.WriteLine("Invalid input. Please enter a number.");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter new Name");
+                            var name = Console.ReadLine();
+
+                            Console.WriteLine("Enter new Age");
+                            if (!int.TryParse(Console.ReadLine(), out age))
+                            {
+                                Console.WriteLine("Invalid input. Please enter a number.");
+                                break;
+                            }
+
+                            if (userIdInput <= 0 || name == null || age <= 0)
+                            {
+                                Console.WriteLine("Invalid input! Try Again!");
+                                break;
+                            }
+
+                            _userService.EditUser(_currentUser.Id, userIdInput, name, age, null);
+                            break;
+                        }
                     case 17:
-                        Console.WriteLine(_currentUser.Name); Console.WriteLine("17. book ticket to user");
+                        {
+
+                            Console.WriteLine("Enter user id: ");
+                            var userIdInput = 0;
+                            if (!int.TryParse(Console.ReadLine(), out userIdInput))
+                            {
+                                Console.WriteLine("Invalid input. Please enter a number.");
+                                break;
+                            }
+
+                            Console.WriteLine("What is the type of the card?");
+                            var cardTypeInput = Console.ReadLine();
+
+                            if (userIdInput <= 0 || cardTypeInput == null)
+                            {
+                                Console.WriteLine("Invalid input! Try Again!");
+                                break;
+                            }
+
+                            DiscountCard? card = null;
+                            if (cardTypeInput.ToLower().Equals("family"))
+                            {
+                                card = new DiscountCard { Type = "family" };
+                            }
+                            else if (cardTypeInput.ToLower().Equals("senior"))
+                            {
+                                card = new DiscountCard { Type = "senior" };
+                            }
+
+                            if (card != null)
+                            {
+                                _userService.EditUser(_currentUser.Id,
+                                    userIdInput, null, null, card);
+                            }
+                            break;
+                        }
+                    case 18:
+                        _bookingService.PrintAllBookings();
                         break;
                     case 0:
                         Console.WriteLine("Exiting...");
@@ -288,7 +421,7 @@ namespace BDJ
             DisplayMainMenu();
         }
 
-        private void RegisterUser()
+        private User? RegisterUser()
         {
             string? name = null;
             string? password = null;
@@ -305,16 +438,19 @@ namespace BDJ
                 var user = _userService.Register(name, password, age);
                 if (user != null)
                 {
-                    _currentUser = user;
                     Console.WriteLine("User Was Registered!");
+                    return user;
                 }
             }
             else
             {
                 Console.WriteLine("Invalid Input. Try Again!");
+                return null;
             }
+            return null;
         }
-        private void LoginUser()
+
+        private User? LoginUser()
         {
             string? name = null;
             string? password = null;
@@ -328,15 +464,18 @@ namespace BDJ
                 var user = _userService.Login(name, password);
                 if (user != null)
                 {
-                    _currentUser = user;
                     Console.WriteLine("User Login was Successful!");
+                    return user;
                 }
             }
             else
             {
                 Console.WriteLine("Invalid Input. Try Again!");
+                return null;
             }
+            return null;
         }
+
         private int GetUserChoice(Action printMenu)
         {
             int choice = -1;
@@ -354,25 +493,5 @@ namespace BDJ
             }
             return choice;
         }
-
-        private DateTime GetDateInput()
-        {
-            while (true)
-            {
-                Console.WriteLine("Enter date: ");
-                DateTime date;
-                //DateTime.TryParseExact(Console.ReadLine(), "dd'.'MM'.'yyyy", CultureInfo.CurrentCulture, DateTimeStyles.None, out date)
-                if (DateTime.TryParse(Console.ReadLine(), CultureInfo.CreateSpecificCulture("en-GB"), DateTimeStyles.None, out date))
-                {
-                    Console.WriteLine(date.ToString());
-                    return date;
-                }
-                else
-                {
-                    Console.WriteLine("You have entered an incorrect date value.");
-                }
-            }
-        }
-
     }
 }

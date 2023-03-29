@@ -22,7 +22,6 @@ namespace BDJ.Services
             _ticketService = new TicketService(_trainSystemContext);
         }
 
-
         public User? AddUser(string name, int age, string password, bool isAdmin, DiscountCard? card)
         {
             string hashedPass = GenerateHashedPassword(password);
@@ -35,6 +34,11 @@ namespace BDJ.Services
         public User? SearchUserById(int id)
         {
             return _trainSystemContext.Users.FirstOrDefault(u => u.Id == id);
+        }
+
+        public User? SearchUserByName(string name)
+        {
+            return _trainSystemContext.Users.FirstOrDefault(u => u.Name.Equals(name));
         }
 
         public User? Login(string name, string password)
@@ -78,7 +82,17 @@ namespace BDJ.Services
             return user;
         }
 
-        public void PrintUsers(int adminId)
+        public void PrintUser(User user)
+        {
+            _trainSystemContext.Entry(user).Reference(u => u.Card).Load();
+            TableFormatPrinter.PrintRow("Id", "Name", "Age", "Card");
+            TableFormatPrinter.PrintLine();
+            string cardtype = user.Card != null ? user.Card.Type == "family" ? "family" : "senior" : "no card";
+            TableFormatPrinter.PrintRow($"{user.Id}", $"{user.Name}", $"{user.Age}", $"{cardtype}");
+            TableFormatPrinter.PrintLine();
+        }
+
+        public void PrintAllUsers(int adminId)
         {
             var admin = SearchUserById(adminId);
             if (admin == null)
@@ -89,10 +103,19 @@ namespace BDJ.Services
 
             if (admin.IsAdmin)
             {
-                var users = _trainSystemContext.Users.ToList();
+                var users = _trainSystemContext.Users
+                    .Include(u => u.Card)
+                    //.Include(u => u.Tickets)
+                    //.Include(u => u.Bookings)
+                    .ToList();
+                TableFormatPrinter.PrintLine();
+                TableFormatPrinter.PrintRow("Id", "Name", "Age", "Card");
+                TableFormatPrinter.PrintLine();
                 foreach (var user in users)
                 {
-                    Console.WriteLine($"{user.Id} - {user.Name} - {user.Age}");
+                    string cardtype = user.Card != null ? user.Card.Type == "family" ? "family" : "senior" : "no card";
+                    TableFormatPrinter.PrintRow($"{user.Id}", $"{user.Name}", $"{user.Age}", $"{cardtype}");
+                    TableFormatPrinter.PrintLine();
                 }
             }
             else
@@ -137,12 +160,21 @@ namespace BDJ.Services
 
             if (newCard != null)
             {
-                userToUpdate.Card = newCard;
-                Console.WriteLine("card");
+                if (userToUpdate.Card != null)
+                {
+                    Console.WriteLine("User already have a card!");
+                }
+                else
+                {
+                    newCard.UserId = userToUpdate.Id;
+                    userToUpdate.Card = newCard;
+                    Console.WriteLine("card");
+                }
             }
 
             //_trainSystemContext.Users.Update(userToUpdate);
             _trainSystemContext.SaveChanges();
+            Console.WriteLine("User was updated!");
             return userToUpdate;
         }
 
@@ -177,7 +209,7 @@ namespace BDJ.Services
         {
 
             var tickets = _trainSystemContext.Ticket
-               .Include(t=> t.Train)
+               .Include(t => t.Train)
                .Include(t => t.User)
                .ToList()
                .Where(b => b.UserId == user.Id);
@@ -209,6 +241,33 @@ namespace BDJ.Services
                .Include(b => b.User)
                .ToList()
                .Where(b => b.UserId == user.Id && b.Active);
+
+            if (bookings == null)
+            {
+                Console.WriteLine("User have no booked Tickets.");
+                return;
+            }
+
+            TableFormatPrinter.PrintLine();
+            TableFormatPrinter.PrintRow("BId", "Price", "Start", "Destination", "Date", "Active");
+            TableFormatPrinter.PrintLine();
+            foreach (var booking in bookings)
+            {
+                TableFormatPrinter.PrintRow($"{booking.Id}", $"{booking.Ticket.Price}",
+                    $"{booking.Ticket.Train.DepartureStation}", $"{booking.Ticket.Train.DestinationStation}",
+                    $"{booking.Ticket.DepartureDate}", $"{booking.Active}");
+                TableFormatPrinter.PrintLine();
+            }
+        }
+
+        public void PrintAllCanceledUserTickets(User user)
+        {
+            var bookings = _trainSystemContext.Bookings
+               .Include(b => b.Ticket)
+               .ThenInclude(t => t.Train)
+               .Include(b => b.User)
+               .ToList()
+               .Where(b => b.UserId == user.Id && !b.Active);
 
             if (bookings == null)
             {
