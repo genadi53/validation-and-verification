@@ -8,7 +8,7 @@ namespace BDJ
 {
     public class TableFormatPrinter
     {
-        static readonly int tableWidth = 100;
+        static readonly int tableWidth = 110;
 
         public static void PrintLine()
         {

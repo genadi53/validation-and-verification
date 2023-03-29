@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -174,21 +175,29 @@ namespace BDJ.Services
 
         public void PrintAllUserTickets(User user)
         {
-            var tickets = user.Tickets;
-            if (tickets.Count > 0)
+
+            var tickets = _trainSystemContext.Ticket
+               .Include(t=> t.Train)
+               .Include(t => t.User)
+               .ToList()
+               .Where(b => b.UserId == user.Id);
+
+            if (tickets == null)
             {
                 Console.WriteLine("User have no Tickets.");
                 return;
             }
 
+            TableFormatPrinter.PrintLine();
+            TableFormatPrinter.PrintRow("Id", "Price", "Start", "Destination", "Date");
+            TableFormatPrinter.PrintLine();
             foreach (var ticket in tickets)
             {
-                _trainSystemContext.Entry(ticket).Reference(t => t.Train).Load();
-                Console.WriteLine($"Ticket with id {ticket.Id}" +
-                    $"costs {ticket.Price}" +
-                    $"is to go from {ticket.Train.DepartureStation}" +
-                    $"to {ticket.Train.DestinationStation}" +
-                    $"on {ticket.DepartureDate}.");
+                //_trainSystemContext.Entry(ticket).Reference(t => t.Train).Load();
+                TableFormatPrinter.PrintRow($"{ticket.Id}", $"{ticket.Price}",
+                    $"{ticket.Train.DepartureStation}", $"{ticket.Train.DestinationStation}",
+                    $"{ticket.DepartureDate}");
+                TableFormatPrinter.PrintLine();
             }
         }
 
@@ -207,13 +216,15 @@ namespace BDJ.Services
                 return;
             }
 
+            TableFormatPrinter.PrintLine();
+            TableFormatPrinter.PrintRow("BId", "Price", "Start", "Destination", "Date", "Active");
+            TableFormatPrinter.PrintLine();
             foreach (var booking in bookings)
             {
-                Console.WriteLine($"Ticket with id {booking.Ticket.Id}" +
-                    $"costs {booking.Ticket.Price}" +
-                    $"is to go from {booking.Ticket.Train.DepartureStation}" +
-                    $"to {booking.Ticket.Train.DestinationStation}" +
-                    $"on {booking.Ticket.DepartureDate}.");
+                TableFormatPrinter.PrintRow($"{booking.Id}", $"{booking.Ticket.Price}",
+                    $"{booking.Ticket.Train.DepartureStation}", $"{booking.Ticket.Train.DestinationStation}",
+                    $"{booking.Ticket.DepartureDate}", $"{booking.Active}");
+                TableFormatPrinter.PrintLine();
             }
         }
 

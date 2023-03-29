@@ -27,8 +27,7 @@ namespace BDJ.Services
         {
 
             var trains = _trainService.SearchTrainByDateAndDestination(destination, date).ToList();
-
-            Console.WriteLine(trains.ToList().Count);
+            //Console.WriteLine(trains.ToList().Count
 
             if (trains == null || trains.Count <= 0)
             {
@@ -37,22 +36,12 @@ namespace BDJ.Services
             }
 
             var train = trains.First();
-            Console.WriteLine($"{train.Id} - {train.DepartureDate} - {train.DestinationStation} - {train.DepartureDate}");
-
             //var priceWithDiscount = _ticketService.CalculateTicketPrice(price, date, withChild, user.Card);
-
             var ticket = _ticketService.AddTicket(user, train, price, date);
-            Console.WriteLine($"{ticket.Id} - {ticket.DepartureDate} - {ticket.Price}");
-
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, Active = true };
-            Console.WriteLine($"{booking.Id} - {booking.TicketId} - {booking.UserId} - {booking.Active}");
 
             //_trainSystemContext.Users.First(u => u.Id == user.Id).Bookings.Add(booking);
-            //_trainSystemContext.Users.First(u => u.Id == user.Id).Tickets.Add(ticket);
-
-            //user.Tickets.Add(ticket);
             user.Bookings.Add(booking);
-
             _trainSystemContext.Bookings.Add(booking);
             _trainSystemContext.SaveChanges();
         }

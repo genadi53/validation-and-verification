@@ -21,7 +21,8 @@ namespace BDJ.Models
 
         public User()
         {
-           Bookings = new HashSet<Booking>();
+            Bookings = new HashSet<Booking>();
+            Tickets = new HashSet<Ticket>();
         }
     }
 }

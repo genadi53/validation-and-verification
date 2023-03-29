@@ -204,9 +204,28 @@ namespace BDJ
                         }
                     case 5:
                         {
-                            double price = 100;
-                            _bookingService.BookTicket(_currentUser, "", "", price, DateTime.Now);
-                            Console.WriteLine(_currentUser.Name);
+                            double price = 10;
+                            Console.WriteLine("Enter train departure station: ");
+                            string? departure = Console.ReadLine();
+
+                            if (departure == null)
+                            {
+                                Console.WriteLine("Departure station can not be empty!");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter train destination: ");
+                            string? destination = Console.ReadLine();
+
+                            if (destination == null)
+                            {
+                                Console.WriteLine("Destiantion can not be empty!");
+                                break;
+                            }
+
+                            Console.WriteLine("Enter date for your ticket");
+                            DateTime date = GetDateInput();
+                            _bookingService.BookTicket(_currentUser, departure, destination, price, date);
                             break;
                         }
                     case 6:
@@ -234,6 +253,7 @@ namespace BDJ
                         break;
                     case 12:
                         Console.WriteLine(_currentUser.Name); Console.WriteLine("12. Show all user profiles");
+                        _bookingService.PrintAllBookings();
                         break;
                     case 13:
                         Console.WriteLine(_currentUser.Name); Console.WriteLine("13. Search user profile by name");
