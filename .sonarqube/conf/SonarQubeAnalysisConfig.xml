@@ -117,7 +117,7 @@
     <Property Name="sonaranalyzer-vbnet.pluginKey">vbnet</Property>
     <Property Name="sonar.updatecenter.url">https://update.sonarsource.org/update-center.properties</Property>
     <Property Name="sonar.core.id">147B411E-AYcFv0udwWVn4jyGO5LH</Property>
-    <Property Name="sonar.core.startTime">3/22/2023 6:47:11 PM</Property>
+    <Property Name="sonar.core.startTime">3/30/2023 4:44:34 PM</Property>
   </ServerSettings>
   <LocalSettings>
     <Property Name="sonar.host.url">http://localhost:9000</Property>
@@ -134,7 +134,6 @@
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
-            <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\THIRD-PARTY-NOTICES.txt</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
         <AnalyzerPlugin Key="vbnet" Version="8.51.0.59060" StaticResourceName="SonarAnalyzer-8.51.0.59060.zip">
@@ -143,7 +142,6 @@
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.CFG.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
-            <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\THIRD-PARTY-NOTICES.txt</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
       </AnalyzerPlugins>
@@ -162,7 +160,6 @@
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CFG.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.CSharp.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\SonarAnalyzer.dll</Path>
-            <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\0\THIRD-PARTY-NOTICES.txt</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
         <AnalyzerPlugin Key="vbnet" Version="8.51.0.59060" StaticResourceName="SonarAnalyzer-8.51.0.59060.zip">
@@ -171,7 +168,6 @@
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.CFG.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.dll</Path>
             <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\SonarAnalyzer.VisualBasic.dll</Path>
-            <Path>C:\Users\Lucy\AppData\Local\Temp\.sonarqube\resources\1\THIRD-PARTY-NOTICES.txt</Path>
           </AssemblyPaths>
         </AnalyzerPlugin>
       </AnalyzerPlugins>

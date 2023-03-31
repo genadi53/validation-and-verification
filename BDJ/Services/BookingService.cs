@@ -1,5 +1,6 @@
 ﻿using BDJ.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,11 +24,10 @@ namespace BDJ.Services
         }
 
 
-        public void BookTicket(User user, string departureStation, string destination, double price, DateTime date) // bool withChild
+        public void BookTicket(User user, string departureStation, string destination, double price, DateTime date, bool withChild)
         {
 
             var trains = _trainService.SearchTrainByDateAndStations(departureStation, destination, date).ToList();
-            //Console.WriteLine(trains.ToList().Count
 
             if (trains == null || trains.Count <= 0)
             {
@@ -36,10 +36,10 @@ namespace BDJ.Services
             }
 
             var train = trains.First();
-
-            //var priceWithDiscount = _ticketService.CalculateTicketPrice(price, date, withChild, user.Card);
+            int numTickets = withChild ? 2 : 1;
+            var priceWithDiscount = _ticketService.CalculateTicketPrice(price, numTickets, date, withChild, user.Card);
             Console.WriteLine(train.DepartureDate);
-            var ticket = _ticketService.AddTicket(user, train, price, train.DepartureDate);
+            var ticket = _ticketService.AddTicket(user, train, priceWithDiscount, train.DepartureDate);
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, Active = true };
 
             //_trainSystemContext.Users.First(u => u.Id == user.Id).Bookings.Add(booking);
@@ -68,21 +68,6 @@ namespace BDJ.Services
                     $"{booking.Ticket.DepartureDate}", $"{booking.Active}");
                 TableFormatPrinter.PrintLine();
             }
-
-            //foreach (var booking in _trainSystemContext.Bookings)
-            //{
-            //    _trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-            //    _trainSystemContext.Entry(booking.Ticket).Reference(t => t.Train).Load();
-            //    //_trainSystemContext.Entry(booking).Reload();
-
-            //    Console.WriteLine($"Booking with id {booking.Id} was booked by {booking.User.Name}, " +
-            //        $"who travels with ticket N{booking.TicketId} " +
-            //        $"going to {booking.Ticket.Train.DestinationStation} " +
-            //        $"from {booking.Ticket.Train.DepartureStation} " +
-            //        $"on {booking.Ticket.Train.DepartureDate} " +
-            //        $"is {booking.Active}");
-            //}
-            //Console.WriteLine("*********************************\n");
         }
 
         public void CancelBooking(User user, string departureStation, string destination, DateTime date)
@@ -101,7 +86,7 @@ namespace BDJ.Services
            .Include(b => b.Ticket)
            .ThenInclude(t => t.Train)
            .Include(b => b.User)
-           .ToList()
+           .AsEnumerable()
            .FirstOrDefault((booking) =>
             {
                 //_trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
@@ -123,10 +108,7 @@ namespace BDJ.Services
                 Console.WriteLine("No Bookings Found!");
                 return;
             }
-            //Console.WriteLine(booking.Id);
-            //Console.WriteLine(booking.Ticket.Train.DepartureStation);
-            //Console.WriteLine(booking.Ticket.Train.DestinationStation);
-            //Console.WriteLine(booking.Ticket.DepartureDate);
+
             if (DateTime.Compare(booking.Ticket.DepartureDate, DateTime.Now) >= 0)
             {
                 booking.Active = false;
@@ -150,15 +132,12 @@ namespace BDJ.Services
             }
 
             _trainSystemContext.Entry(foundUser).Collection(u => u.Bookings).Load();
-            //var booking = foundUser.Bookings.FirstOrDefault();
-
-
 
             var booking = _trainSystemContext.Bookings
                 .Include(b => b.Ticket)
                 .ThenInclude(ticket => ticket.Train)
                 .Include(b => b.User)
-                .ToList()
+                .AsEnumerable()
                 .FirstOrDefault((booking) =>
                 {
                     if (booking.UserId != foundUser.Id)
@@ -202,8 +181,6 @@ namespace BDJ.Services
             else
             {
                 Console.WriteLine("Booking Date is passed and it can't be updated.");
-
-                //_userService.PrintAllActiveUserTickets(foundUser);
             }
         }
     }

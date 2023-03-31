@@ -87,7 +87,7 @@ namespace BDJ.Services
             _trainSystemContext.Entry(user).Reference(u => u.Card).Load();
             TableFormatPrinter.PrintRow("Id", "Name", "Age", "Card");
             TableFormatPrinter.PrintLine();
-            string cardtype = user.Card != null ? user.Card.Type == "family" ? "family" : "senior" : "no card";
+            string cardtype = CardType.GetCardType(user.Card);
             TableFormatPrinter.PrintRow($"{user.Id}", $"{user.Name}", $"{user.Age}", $"{cardtype}");
             TableFormatPrinter.PrintLine();
         }
@@ -113,7 +113,7 @@ namespace BDJ.Services
                 TableFormatPrinter.PrintLine();
                 foreach (var user in users)
                 {
-                    string cardtype = user.Card != null ? user.Card.Type == "family" ? "family" : "senior" : "no card";
+                    string cardtype = CardType.GetCardType(user.Card);
                     TableFormatPrinter.PrintRow($"{user.Id}", $"{user.Name}", $"{user.Age}", $"{cardtype}");
                     TableFormatPrinter.PrintLine();
                 }
@@ -121,7 +121,6 @@ namespace BDJ.Services
             else
             {
                 Console.WriteLine("Not an admin.");
-                return;
             }
 
 
@@ -172,7 +171,6 @@ namespace BDJ.Services
                 }
             }
 
-            //_trainSystemContext.Users.Update(userToUpdate);
             _trainSystemContext.SaveChanges();
             Console.WriteLine("User was updated!");
             return userToUpdate;
@@ -200,8 +198,6 @@ namespace BDJ.Services
 
             user.Tickets.Add(ticket);
             ticket.User = user;
-            //_trainSystemContext.Users.Update(user);
-            //_trainSystemContext.Ticket.Update(ticket);
             _trainSystemContext.SaveChanges();
         }
 
@@ -211,7 +207,7 @@ namespace BDJ.Services
             var tickets = _trainSystemContext.Ticket
                .Include(t => t.Train)
                .Include(t => t.User)
-               .ToList()
+               .AsEnumerable()
                .Where(b => b.UserId == user.Id);
 
             if (tickets == null)
@@ -225,7 +221,6 @@ namespace BDJ.Services
             TableFormatPrinter.PrintLine();
             foreach (var ticket in tickets)
             {
-                //_trainSystemContext.Entry(ticket).Reference(t => t.Train).Load();
                 TableFormatPrinter.PrintRow($"{ticket.Id}", $"{ticket.Price}",
                     $"{ticket.Train.DepartureStation}", $"{ticket.Train.DestinationStation}",
                     $"{ticket.DepartureDate}");
@@ -239,7 +234,7 @@ namespace BDJ.Services
                .Include(b => b.Ticket)
                .ThenInclude(t => t.Train)
                .Include(b => b.User)
-               .ToList()
+               .AsEnumerable()
                .Where(b => b.UserId == user.Id && b.Active);
 
             if (bookings == null)
@@ -266,7 +261,7 @@ namespace BDJ.Services
                .Include(b => b.Ticket)
                .ThenInclude(t => t.Train)
                .Include(b => b.User)
-               .ToList()
+               .AsEnumerable()
                .Where(b => b.UserId == user.Id && !b.Active);
 
             if (bookings == null)
@@ -294,10 +289,6 @@ namespace BDJ.Services
 
             // Hash the password with the salt
             string hashedPassword = HashPassword(password, salt);
-
-            //Console.WriteLine("Salt: {0}", salt);
-            //Console.WriteLine("Hashed Password: {0}", hashedPassword);
-
             return String.Concat(hashedPassword, delimiter, salt);
         }
 

@@ -110,7 +110,7 @@ namespace BDJ.Services
             }
         }
 
-        public void PrintGivenTrains(IQueryable<Train>? trains)
+        public static void PrintGivenTrains(IQueryable<Train>? trains)
         {
             if (trains == null) return;
             TableFormatPrinter.PrintLine();

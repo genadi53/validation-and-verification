@@ -29,12 +29,10 @@ namespace BDJ.Services
             {
                 if ((card != null) && (card.Type == "family"))
                 {
-                    //discount = discount > 0.5 ? 0.5 : discount;
                     discount = 0.5;
                 }
                 else
                 {
-                    //discount = discount > 0.9 ? 0.9 : discount;
                     discount = 0.9;
                 }
 
@@ -42,13 +40,12 @@ namespace BDJ.Services
 
             if ((card != null) && (card.Type == "senior"))
             {
-                //discount = discount > 0.66 ? 0.66 : discount;
                 discount = 0.66;
             }
 
-            bool isInEarlyTraffic = Time.isTimeBetween(earlyTraficStart, earlyTraficEnd, trainLeaveTime.TimeOfDay);
-            bool isInLateTraffic = Time.isTimeBetween(lateTraficStart, lateTraficEnd, trainLeaveTime.TimeOfDay);
-            if (isInEarlyTraffic || isInLateTraffic)
+
+            bool InTraffic = IsInTraffic(trainLeaveTime);
+            if (InTraffic)
             {
                 discount = discount >= 1 ? 1 : discount;
             }
@@ -59,6 +56,13 @@ namespace BDJ.Services
 
             return numberOfTickets * tickePrice * discount;
 
+        }
+
+        private bool IsInTraffic(DateTime date)
+        {
+            bool isInEarlyTraffic = Time.isTimeBetween(earlyTraficStart, earlyTraficEnd, date.TimeOfDay);
+            bool isInLateTraffic = Time.isTimeBetween(lateTraficStart, lateTraficEnd, date.TimeOfDay);
+            return isInEarlyTraffic || isInLateTraffic;
         }
 
         public double CalculateTwoWayTicketPrice(bool isTwoWay, double tickePrice, int numberOfTickets, DateTime trainLeaveTime, bool withChild, DiscountCard? card)

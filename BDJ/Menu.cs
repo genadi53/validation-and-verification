@@ -14,7 +14,6 @@ namespace BDJ
 
         private User? _currentUser = null;
         private readonly TrainSystemContext _trainSystemContext;
-        private readonly TicketService _ticketService;
         private readonly BookingService _bookingService;
         private readonly UserService _userService;
         private readonly TrainService _trainService;
@@ -22,69 +21,9 @@ namespace BDJ
         public Menu()
         {
             _trainSystemContext = new TrainSystemContext();
-            _ticketService = new TicketService(_trainSystemContext);
             _bookingService = new BookingService(_trainSystemContext);
             _userService = new UserService(_trainSystemContext);
             _trainService = new TrainService(_trainSystemContext);
-        }
-
-        public static void DisplayFancyMenu()
-        {
-            Console.Clear();
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.CursorVisible = false;
-            Console.ResetColor();
-            Console.WriteLine("\nUse ⬆️  and ⬇️  to navigate and press \u001b[32mEnter/Return\u001b[0m to select:");
-            (int left, int top) = Console.GetCursorPosition();
-            var option = 1;
-            var decorator = "✅ \u001b[32m";
-            ConsoleKeyInfo key;
-            bool isSelected = false;
-
-            while (!isSelected)
-            {
-                Console.SetCursorPosition(left, top);
-
-                Console.WriteLine($"{(option == 1 ? decorator : "   ")}Register\u001b[0m");
-                Console.WriteLine($"{(option == 2 ? decorator : "   ")}Login\u001b[0m");
-                Console.WriteLine($"{(option == 3 ? decorator : "   ")}Exit\u001b[0m");
-
-                key = Console.ReadKey(false);
-
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        option = option == 1 ? 3 : option - 1;
-                        break;
-
-                    case ConsoleKey.DownArrow:
-                        option = option == 3 ? 1 : option + 1;
-                        break;
-
-                    case ConsoleKey.Enter:
-                        isSelected = true;
-                        break;
-                }
-            }
-
-            Console.WriteLine($"\n{decorator}You selected Option {option}");
-
-            switch (option)
-            {
-                case 1:
-                    Console.WriteLine($"\n{decorator}You selected Option {option}");
-                    break;
-
-                case 2:
-                    Console.WriteLine($"\n{decorator}You selected Option {option}");
-                    break;
-
-                case 3:
-                    Console.WriteLine($"\n{decorator}You selected Option {option}");
-                    break;
-            }
-
-            Console.ReadLine();
         }
 
         public void DisplayLoginMenu()
@@ -93,14 +32,14 @@ namespace BDJ
             {
                 Action printMenu = () =>
                 {
-                    //Console.Clear();
+                    Console.Clear();
                     Console.WriteLine("Hello, please select an option:");
                     Console.WriteLine("1. Login");
                     Console.WriteLine("2. Register");
                     Console.WriteLine("0. Exit");
                 };
 
-                int option = GetUserChoice(printMenu);
+                int option = Menu.GetUserChoice(printMenu);
                 switch (option)
                 {
                     case 1:
@@ -165,7 +104,7 @@ namespace BDJ
                 };
 
                 printMenu();
-                int option = GetUserChoice(printMenu);
+                int option = Menu.GetUserChoice(printMenu);
                 switch (option)
                 {
                     case 1:
@@ -175,7 +114,7 @@ namespace BDJ
                         {
                             DateTime date = Time.GetDateInput();
                             var trains = _trainService.SearchTrainByDepartureDate(date);
-                            _trainService.PrintGivenTrains(trains);
+                            TrainService.PrintGivenTrains(trains);
                             break;
                         }
                     case 3:
@@ -190,7 +129,7 @@ namespace BDJ
                             }
 
                             var trains = _trainService.SearchTrainByDestination(destination);
-                            _trainService.PrintGivenTrains(trains);
+                            TrainService.PrintGivenTrains(trains);
                             break;
                         }
                     case 4:
@@ -205,7 +144,7 @@ namespace BDJ
                             }
                             DateTime date = Time.GetDateInput();
                             var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
-                            _trainService.PrintGivenTrains(trains);
+                            TrainService.PrintGivenTrains(trains);
                             break; 
                         }
                     case 5:
@@ -231,7 +170,12 @@ namespace BDJ
 
                             Console.WriteLine("Enter date for your ticket");
                             DateTime date = Time.GetDateInput();
-                            _bookingService.BookTicket(_currentUser, departure, destination, price, date);
+
+                            Console.WriteLine("With child: ");
+                            bool withChild = false;
+                            bool.TryParse(Console.ReadLine(), out withChild);
+
+                            _bookingService.BookTicket(_currentUser, departure, destination, price, date, withChild);
                             break;
                         }
                     case 6:
@@ -300,7 +244,7 @@ namespace BDJ
                         }
                     case 11:
                         {
-                            string cardtype = _currentUser.Card != null ? _currentUser.Card.Type == "family" ? "family" : "senior" : "no";
+                            string cardtype = CardType.GetCardType(_currentUser.Card);
                             Console.WriteLine($"Logged in as {_currentUser.Name}, and have {cardtype} card");
                             break;
                         }
@@ -425,11 +369,19 @@ namespace BDJ
         {
             string? name = null;
             string? password = null;
+            
             Console.WriteLine("Enter Name: ");
             name = Console.ReadLine();
+
             Console.WriteLine("Enter Age: ");
             string? numinput = Console.ReadLine();
-            int.TryParse(numinput, out int age);
+            if (!int.TryParse(numinput, out int age))
+            {
+                Console.WriteLine();
+                Console.WriteLine("Invalid input. Please enter a number.");
+                return null;
+            }
+
             Console.WriteLine("Enter Password: ");
             password = Console.ReadLine();
 
@@ -476,7 +428,7 @@ namespace BDJ
             return null;
         }
 
-        private int GetUserChoice(Action printMenu)
+        private static int GetUserChoice(Action printMenu)
         {
             int choice = -1;
             while (choice < 0)
@@ -487,9 +439,7 @@ namespace BDJ
                 if (!int.TryParse(input, out choice))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Invalid input. Please enter a number.");
-                    continue;
-                }
+                    Console.WriteLine("Invalid input. Please enter a number.");                }
             }
             return choice;
         }

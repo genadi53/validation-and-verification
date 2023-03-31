@@ -1,15 +1,13 @@
-﻿C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314145518_InitialCreate.cs
+﻿C:\Users\Lucy\Desktop\opengl\VV\BDJ\CardType.cs
+C:\Users\Lucy\Desktop\opengl\VV\BDJ\Menu.cs
+C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314145518_InitialCreate.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314145518_InitialCreate.Designer.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314145557_InitialCreatev1.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314145557_InitialCreatev1.Designer.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314160950_Version2.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314160950_Version2.Designer.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314205112_Mapping.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314205112_Mapping.Designer.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314210544_MappingV2.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230314210544_MappingV2.Designer.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230321073407_Virtualization.cs
-C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230321073407_Virtualization.Designer.cs
+C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230323121956_AddPass.cs
+C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\20230323121956_AddPass.Designer.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Migrations\TrainSystemContextModelSnapshot.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Models\Booking.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Models\DiscountCard.cs
@@ -21,5 +19,6 @@ C:\Users\Lucy\Desktop\opengl\VV\BDJ\Services\BookingService.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Services\TicketService.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Services\TrainService.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Services\UserService.cs
+C:\Users\Lucy\Desktop\opengl\VV\BDJ\TableFormatPrinter.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\Time.cs
 C:\Users\Lucy\Desktop\opengl\VV\BDJ\TrainSystemContext.cs

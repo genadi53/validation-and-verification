@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BDJ
 {
-    public class Time
+    public static class Time
     {
         public static bool isTimeBetween(TimeSpan start, TimeSpan end, TimeSpan timeToCheck)
         {
