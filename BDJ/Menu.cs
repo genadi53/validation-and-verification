@@ -122,7 +122,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null)
+                            if (destination == null || destination.Equals(String.Empty))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
@@ -137,7 +137,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null)
+                            if (destination == null || destination.Equals(String.Empty))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
@@ -145,7 +145,7 @@ namespace BDJ
                             DateTime date = Time.GetDateInput();
                             var trains = _trainService.SearchTrainByDateAndDestination(destination, date);
                             TrainService.PrintGivenTrains(trains);
-                            break; 
+                            break;
                         }
                     case 5:
                         {
@@ -153,7 +153,7 @@ namespace BDJ
                             Console.WriteLine("Enter train departure station: ");
                             string? departure = Console.ReadLine();
 
-                            if (departure == null)
+                            if (departure == null || departure.Equals(String.Empty))
                             {
                                 Console.WriteLine("Departure station can not be empty!");
                                 break;
@@ -162,12 +162,11 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null)
+                            if (destination == null || destination.Equals(String.Empty))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
                             }
-
                             Console.WriteLine("Enter date for your ticket");
                             DateTime date = Time.GetDateInput();
 
@@ -336,6 +335,10 @@ namespace BDJ
                             {
                                 card = new DiscountCard { Type = "senior" };
                             }
+                            else
+                            {
+                                Console.WriteLine("Invalid card type!");
+                            }
 
                             if (card != null)
                             {
@@ -369,7 +372,7 @@ namespace BDJ
         {
             string? name = null;
             string? password = null;
-            
+
             Console.WriteLine("Enter Name: ");
             name = Console.ReadLine();
 
@@ -439,7 +442,8 @@ namespace BDJ
                 if (!int.TryParse(input, out choice))
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Invalid input. Please enter a number.");                }
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                }
             }
             return choice;
         }

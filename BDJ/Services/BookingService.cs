@@ -38,7 +38,13 @@ namespace BDJ.Services
             var train = trains.First();
             int numTickets = withChild ? 2 : 1;
             var priceWithDiscount = _ticketService.CalculateTicketPrice(price, numTickets, date, withChild, user.Card);
-            Console.WriteLine(train.DepartureDate);
+            
+            if(priceWithDiscount <= 0)
+            {
+                Console.WriteLine($"Invalid provided price!");
+                return;
+            }
+
             var ticket = _ticketService.AddTicket(user, train, priceWithDiscount, train.DepartureDate);
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, Active = true };
 
@@ -46,6 +52,7 @@ namespace BDJ.Services
             user.Bookings.Add(booking);
             _trainSystemContext.Bookings.Add(booking);
             _trainSystemContext.SaveChanges();
+            Console.WriteLine("Booking completed");
         }
 
         public void PrintAllBookings()
@@ -113,6 +120,7 @@ namespace BDJ.Services
             {
                 booking.Active = false;
                 _trainSystemContext.SaveChanges();
+                Console.WriteLine("Booking is Cancelled.");
             }
             else
             {

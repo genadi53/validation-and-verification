@@ -99,20 +99,17 @@ namespace BDJ.Services
 
         public void PrintDailyTrains()
         {
-            var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Now.DayOfYear).ToList();
-            TableFormatPrinter.PrintLine();
-            TableFormatPrinter.PrintRow("Id", "Start", "Destination", "Date");
-            TableFormatPrinter.PrintLine();
-            foreach (var train in trains)
-            {
-                TableFormatPrinter.PrintRow($"{train.Id}", $"{train.DepartureStation}", $"{train.DestinationStation}", $"{train.DepartureDate}");
-                TableFormatPrinter.PrintLine();
-            }
+            var trains = _trainSystemContext.Trains.Where(train => train.DepartureDate.DayOfYear == DateTime.Now.DayOfYear).AsQueryable();
+            PrintGivenTrains(trains);
         }
 
         public static void PrintGivenTrains(IQueryable<Train>? trains)
         {
-            if (trains == null) return;
+            if (trains == null || !trains.Any())
+            {
+                Console.WriteLine("No trains found!");
+                return;
+            }
             TableFormatPrinter.PrintLine();
             TableFormatPrinter.PrintRow("Id", "Start", "Destination", "Date");
             TableFormatPrinter.PrintLine();

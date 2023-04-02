@@ -55,7 +55,6 @@ namespace BDJ.Services
             }
 
             return numberOfTickets * tickePrice * discount;
-
         }
 
         private bool IsInTraffic(DateTime date)

@@ -282,6 +282,40 @@ namespace BDJ.Services
             }
         }
 
+        public void ApplyAdminDiscount(int adminId, int ticketId)
+        {
+            var admin = _trainSystemContext.Users.FirstOrDefault(u => u.Id == adminId && u.IsAdmin);
+
+            if (admin == null)
+            {
+                Console.WriteLine("No admin rights");
+                return;
+            }
+
+            var booking = _trainSystemContext.Bookings
+               .Include(b => b.Ticket)
+               .ThenInclude(t => t.Train)
+               .Include(b => b.User)
+               .AsEnumerable()
+               .FirstOrDefault(b => b.Ticket.Id == ticketId);
+
+            if (booking == null)
+            {
+                Console.WriteLine($"User have no Ticket with id {ticketId}.");
+                return;
+            }
+
+            booking.Ticket.Price = _ticketService.CalculateTicketPrice(
+                booking.Ticket.Price,
+                1,
+                booking.Ticket.Train.DepartureDate,
+                true,
+                booking.User.Card
+                );
+
+        }
+
+
         private static string GenerateHashedPassword(string password)
         {
             // Generate a random salt for the password
