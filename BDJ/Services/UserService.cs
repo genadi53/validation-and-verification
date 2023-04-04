@@ -24,6 +24,13 @@ namespace BDJ.Services
 
         public User? AddUser(string name, int age, string password, bool isAdmin, DiscountCard? card)
         {
+            bool isAgeInvalid = age <= 0 && age > 150;
+            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(password) || isAgeInvalid)
+            {
+                Console.WriteLine("User was not registered!");
+                return null;
+            }
+
             string hashedPass = GenerateHashedPassword(password);
             var user = new User { Name = name, Age = age, Card = card, Password = hashedPass, IsAdmin = isAdmin };
             _trainSystemContext.Users.Add(user);
