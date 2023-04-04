@@ -122,7 +122,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null || destination.Equals(String.Empty))
+                            if (String.IsNullOrEmpty(destination))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
@@ -137,7 +137,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null || destination.Equals(String.Empty))
+                            if (String.IsNullOrEmpty(destination))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;
@@ -153,7 +153,7 @@ namespace BDJ
                             Console.WriteLine("Enter train departure station: ");
                             string? departure = Console.ReadLine();
 
-                            if (departure == null || departure.Equals(String.Empty))
+                            if (String.IsNullOrEmpty(departure))
                             {
                                 Console.WriteLine("Departure station can not be empty!");
                                 break;
@@ -162,7 +162,7 @@ namespace BDJ
                             Console.WriteLine("Enter train destination: ");
                             string? destination = Console.ReadLine();
 
-                            if (destination == null || destination.Equals(String.Empty))
+                            if (String.IsNullOrEmpty(destination))
                             {
                                 Console.WriteLine("Destiantion can not be empty!");
                                 break;

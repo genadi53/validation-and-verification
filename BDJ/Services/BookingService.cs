@@ -48,7 +48,6 @@ namespace BDJ.Services
             var ticket = _ticketService.AddTicket(user, train, priceWithDiscount, train.DepartureDate);
             var booking = new Booking { Ticket = ticket, TicketId = ticket.Id, User = user, UserId = user.Id, Active = true };
 
-            //_trainSystemContext.Users.First(u => u.Id == user.Id).Bookings.Add(booking);
             user.Bookings.Add(booking);
             _trainSystemContext.Bookings.Add(booking);
             _trainSystemContext.SaveChanges();
@@ -57,7 +56,6 @@ namespace BDJ.Services
 
         public void PrintAllBookings()
         {
-            //_trainSystemContext.ChangeTracker.Clear();
             var bookings = _trainSystemContext.Bookings
                .Include(b => b.Ticket)
                .ThenInclude(t => t.Train)
@@ -96,12 +94,9 @@ namespace BDJ.Services
            .AsEnumerable()
            .FirstOrDefault((booking) =>
             {
-                //_trainSystemContext.Entry(booking).Reference(booking => booking.Ticket).Load();
-                //_trainSystemContext.Entry(booking).Reference(booking => booking.User).Load();
 
                 if (booking.Ticket.Train.DestinationStation.ToLower().Equals(destination.ToLower())
                     && booking.Ticket.Train.DepartureStation.ToLower().Equals(departureStation.ToLower())
-                    //&& Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, date)
                     && Time.SameDay(booking.Ticket.DepartureDate, date)
                 )
                 {
@@ -155,7 +150,6 @@ namespace BDJ.Services
 
                     if (booking.Ticket.Train.DestinationStation.ToLower().Equals(destination.ToLower())
                         && booking.Ticket.Train.DepartureStation.ToLower().Equals(departureStation.ToLower())
-                         //&& Time.EqualsUpToSeconds(booking.Ticket.DepartureDate, date)
                          && Time.SameDay(booking.Ticket.DepartureDate, oldDate)
                     )
                     {

@@ -52,12 +52,9 @@ namespace BDJ.Services
             }
 
             string? savedSalt = user.Password.Split(delimiter).Last();
-            //Console.WriteLine($"saved pass : {user.Password}");
-            //Console.WriteLine($"savedSalt : {savedSalt}");
 
 
             var hashedPassword = HashPassword(password, savedSalt);
-            //Console.WriteLine(hashedPassword);
 
             if (user.Password.Equals(String.Concat(hashedPassword, delimiter, savedSalt)))
             {
@@ -105,8 +102,6 @@ namespace BDJ.Services
             {
                 var users = _trainSystemContext.Users
                     .Include(u => u.Card)
-                    //.Include(u => u.Tickets)
-                    //.Include(u => u.Bookings)
                     .ToList();
                 TableFormatPrinter.PrintLine();
                 TableFormatPrinter.PrintRow("Id", "Name", "Age", "Card");
