@@ -172,8 +172,16 @@ namespace BDJ
 
                             Console.WriteLine("With child: ");
                             bool withChild = false;
-                            bool.TryParse(Console.ReadLine(), out withChild);
+                           
+                            if (bool.TryParse(Console.ReadLine(), out withChild))
+                            {
+                                withChild = true;
+                            } else
+                            {
+                                withChild = false;
+                            }
 
+                            Console.WriteLine(withChild);
                             _bookingService.BookTicket(_currentUser, departure, destination, price, date, withChild);
                             break;
                         }

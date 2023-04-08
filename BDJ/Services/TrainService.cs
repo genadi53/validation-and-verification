@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -65,7 +66,6 @@ namespace BDJ.Services
 
         private void GenerateCityPairs()
         {
-            var random = new Random();
             for (int i = 0; i < cityNames.Count; i++)
             {
                 string city1 = cityNames[i];
@@ -73,24 +73,33 @@ namespace BDJ.Services
 
                 do
                 {
-                    int randomIndex = random.Next(cityNames.Count);
+                    int randomIndex = NextInt(0, cityNames.Count);
                     city2 = cityNames[randomIndex];
                 } while (city1 == city2);
 
                 cityPairs.Add(new Tuple<string, string>(city1, city2));
             }
         }
+        private static int NextInt(int min, int max)
+        {
+            // Compliant for security-sensitive use cases
+            var randomGenerator = RandomNumberGenerator.Create(); 
+            byte[] data = new byte[16];
+            randomGenerator.GetBytes(data);
+            BitConverter.ToInt64(data);
+            randomGenerator.GetBytes(data);
+            int result = BitConverter.ToInt32(data, 0);
+
+            return new Random(result).Next(min, max);
+        }
 
         public void MockDailyTrains()
         {
-
             GenerateCityPairs();
-
-            var random = new Random();
             foreach (var pair in cityPairs)
             {
                 Console.WriteLine($"{pair.Item1} - {pair.Item2}");
-                var train = new Train { DepartureStation = pair.Item1, DestinationStation = pair.Item2, DepartureDate = DateTime.Today.AddHours(random.Next(24)), Seats = 100 };
+                var train = new Train { DepartureStation = pair.Item1, DestinationStation = pair.Item2, DepartureDate = DateTime.Today.AddHours(NextInt(0, 24)), Seats = 100 };
                 _trainSystemContext.Trains.Add(train);
                 _trainSystemContext.SaveChanges();
             }

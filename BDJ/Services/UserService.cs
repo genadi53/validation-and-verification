@@ -178,31 +178,6 @@ namespace BDJ.Services
             return userToUpdate;
         }
 
-        public void ApplyAdminDiscount(int adminId, int userId, Ticket ticket)
-        {
-            var admin = _trainSystemContext.Users.FirstOrDefault(u => u.Id == adminId && u.IsAdmin);
-
-            if (admin == null)
-            {
-                Console.WriteLine("No admin rights");
-                return;
-            }
-
-            var user = _trainSystemContext.Users.FirstOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                Console.WriteLine("No such user!");
-                return;
-            }
-
-            ticket.Price = _ticketService.CalculateTicketPrice(ticket.Price, 0, ticket.DepartureDate, false, user.Card);
-
-            user.Tickets.Add(ticket);
-            ticket.User = user;
-            _trainSystemContext.SaveChanges();
-        }
-
         public void PrintAllUserTickets(User user)
         {
 
@@ -317,6 +292,30 @@ namespace BDJ.Services
 
         }
 
+        public void ApplyAdminDiscount(int adminId, int userId, Ticket ticket)
+        {
+            var admin = _trainSystemContext.Users.FirstOrDefault(u => u.Id == adminId && u.IsAdmin);
+
+            if (admin == null)
+            {
+                Console.WriteLine("No admin rights");
+                return;
+            }
+
+            var user = _trainSystemContext.Users.FirstOrDefault(u => u.Id == userId);
+
+            if (user == null)
+            {
+                Console.WriteLine("No such user!");
+                return;
+            }
+
+            ticket.Price = _ticketService.CalculateTicketPrice(ticket.Price, 1, ticket.DepartureDate, false, user.Card);
+
+            user.Tickets.Add(ticket);
+            ticket.User = user;
+            _trainSystemContext.SaveChanges();
+        }
 
         private static string GenerateHashedPassword(string password)
         {

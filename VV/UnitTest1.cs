@@ -143,6 +143,32 @@ namespace VV
         }
 
         [Test]
+        [Category("With Senior Card And Child")]
+        public void caluculateTicketPriceWithSeniorDiscountAndChild()
+        {
+            double initialPrice = 10.00;
+            bool withChild = true;
+            int numberOfTickets = 2;
+            double expectedPrice = 10.00 * 0.66 * numberOfTickets;
+
+
+            DateTime trainLeaveTime1 = new DateTime(2023, 3, 12, 11, 00, 0);
+            DateTime trainLeaveTime2 = new DateTime(2023, 3, 12, 21, 00, 0);
+
+            var result1 = _ticketService.CalculateTicketPrice(initialPrice, numberOfTickets, trainLeaveTime1, withChild, seniorCard);
+            var result2 = _ticketService.CalculateTicketPrice(initialPrice, numberOfTickets, trainLeaveTime1, withChild, seniorCard);
+
+            Console.WriteLine(result1);
+            Console.WriteLine(result2);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(result1, Is.EqualTo(expectedPrice));
+                Assert.That(result2, Is.EqualTo(expectedPrice));
+            });
+        }
+
+        [Test]
         [Category("With Family Card")]
         public void CalculateTicketPriceWithFamilyDiscount()
         {
